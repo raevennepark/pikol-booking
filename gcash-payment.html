@@ -41,7 +41,6 @@
             flex-direction: column;
         }
 
-        /* Header */
         .payment-header {
             background: linear-gradient(135deg, var(--gcash-blue), var(--gcash-dark));
             color: white;
@@ -113,7 +112,6 @@
             vertical-align: super;
         }
 
-        /* Card */
         .payment-card {
             background: white;
             margin: -30px 16px 16px;
@@ -152,7 +150,6 @@
             font-size: 1.1rem;
         }
 
-        /* Pay Button */
         .pay-button {
             background: linear-gradient(135deg, var(--gcash-blue), var(--gcash-dark));
             color: white;
@@ -187,7 +184,6 @@
             transform: none;
         }
 
-        /* Processing State */
         .processing-overlay {
             position: fixed;
             inset: 0;
@@ -229,7 +225,6 @@
             margin-top: 8px;
         }
 
-        /* Security Badge */
         .security-badge {
             display: flex;
             align-items: center;
@@ -244,7 +239,6 @@
             color: var(--success);
         }
 
-        /* Footer */
         .payment-footer {
             text-align: center;
             padding: 20px;
@@ -252,13 +246,6 @@
             font-size: 0.75rem;
         }
 
-        .payment-footer img {
-            height: 24px;
-            margin-bottom: 8px;
-            opacity: 0.6;
-        }
-
-        /* Cancel Link */
         .cancel-link {
             display: block;
             text-align: center;
@@ -279,7 +266,7 @@
         <div class="payment-header">
             <div class="merchant-info">
                 <div class="merchant-logo">
-                    <img src="assets/logo.png" alt="Cedon">
+                    <img src="logo.png" alt="Cedon">
                 </div>
                 <div class="merchant-name">
                     <h2>Cedon Pickleball Court</h2>
@@ -345,7 +332,6 @@
             const redirectUrl = params.get('redirect') || '';
             const ref = params.get('ref') || 'CEDON-' + Date.now();
 
-            // Update display
             document.getElementById('amountValue').textContent = amount;
             document.getElementById('detailAmount').textContent = '₱' + parseInt(amount).toFixed(2);
             document.getElementById('refNumber').textContent = ref;
@@ -353,23 +339,20 @@
                 year: 'numeric', month: 'short', day: 'numeric'
             });
 
-            // Pay button
             document.getElementById('payButton').addEventListener('click', function() {
                 const overlay = document.getElementById('processingOverlay');
                 overlay.classList.add('active');
 
-                // Simulate processing delay
                 setTimeout(function() {
                     if (redirectUrl) {
                         window.location.href = decodeURIComponent(redirectUrl);
                     } else {
-                        alert('Payment simulated successfully! In production, this redirects back from GCash.');
+                        alert('Payment simulated successfully!');
                         window.history.back();
                     }
                 }, 2500);
             });
 
-            // Cancel link
             document.getElementById('cancelLink').addEventListener('click', function(e) {
                 e.preventDefault();
                 if (confirm('Cancel this payment?')) {
