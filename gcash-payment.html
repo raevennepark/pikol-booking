@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GCash Payment - Cedon Pickleball Court</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --gcash-blue: #005ce6;
+            --gcash-dark: #004bb5;
+            --gcash-light: #e8f1ff;
+            --text-dark: #1a1a2e;
+            --text-muted: #6b7280;
+            --bg-gray: #f3f4f6;
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-gray);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .payment-container {
+            max-width: 420px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .payment-header {
+            background: linear-gradient(135deg, var(--gcash-blue), var(--gcash-dark));
+            color: white;
+            padding: 40px 24px 60px;
+            text-align: center;
+            position: relative;
+            border-radius: 0 0 24px 24px;
+        }
+
+        .merchant-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .merchant-logo {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .merchant-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .merchant-name {
+            text-align: left;
+        }
+
+        .merchant-name h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .merchant-name p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .amount-display {
+            margin-top: 8px;
+        }
+
+        .amount-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .amount-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .amount-currency {
+            font-size: 1.2rem;
+            font-weight: 600;
+            vertical-align: super;
+        }
+
+        /* Card */
+        .payment-card {
+            background: white;
+            margin: -30px 16px 16px;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            flex: 1;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .detail-value {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+
+        .detail-value.amount {
+            color: var(--gcash-blue);
+            font-size: 1.1rem;
+        }
+
+        /* Pay Button */
+        .pay-button {
+            background: linear-gradient(135deg, var(--gcash-blue), var(--gcash-dark));
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+
+        .pay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 92, 230, 0.3);
+        }
+
+        .pay-button:active {
+            transform: translateY(0);
+        }
+
+        .pay-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Processing State */
+        .processing-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .processing-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--gcash-light);
+            border-top-color: var(--gcash-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .processing-text {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .processing-subtext {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        /* Security Badge */
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .security-badge i {
+            color: var(--success);
+        }
+
+        /* Footer */
+        .payment-footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .payment-footer img {
+            height: 24px;
+            margin-bottom: 8px;
+            opacity: 0.6;
+        }
+
+        /* Cancel Link */
+        .cancel-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .cancel-link:hover {
+            color: var(--gcash-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <div class="merchant-info">
+                <div class="merchant-logo">
+                    <img src="assets/logo.png" alt="Cedon">
+                </div>
+                <div class="merchant-name">
+                    <h2>Cedon Pickleball Court</h2>
+                    <p>San Francisco, Talibon, Bohol</p>
+                </div>
+            </div>
+            <div class="amount-display">
+                <div class="amount-label">Total Amount</div>
+                <div class="amount-value">
+                    <span class="amount-currency">₱</span>
+                    <span id="amountValue">200</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="payment-card">
+            <div class="detail-row">
+                <span class="detail-label">Merchant</span>
+                <span class="detail-value">Cedon Pickleball Court</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Reference No.</span>
+                <span class="detail-value" id="refNumber">CEDON-001</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value" id="paymentDate">-</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Amount</span>
+                <span class="detail-value amount" id="detailAmount">₱200.00</span>
+            </div>
+
+            <button id="payButton" class="pay-button">
+                <i class="fas fa-wallet"></i>
+                Pay with GCash
+            </button>
+
+            <a href="#" id="cancelLink" class="cancel-link">Cancel Payment</a>
+
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secured by GCash Payment Gateway</span>
+            </div>
+        </div>
+
+        <div class="payment-footer">
+            <p>This is a demo payment page for testing purposes.</p>
+            <p style="margin-top:4px;">In production, this will redirect to the actual GCash app or hosted checkout.</p>
+        </div>
+    </div>
+
+    <div id="processingOverlay" class="processing-overlay">
+        <div class="spinner"></div>
+        <div class="processing-text">Processing Payment</div>
+        <div class="processing-subtext">Please do not close this window...</div>
+    </div>
+
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const amount = params.get('amount') || '200';
+            const redirectUrl = params.get('redirect') || '';
+            const ref = params.get('ref') || 'CEDON-' + Date.now();
+
+            // Update display
+            document.getElementById('amountValue').textContent = amount;
+            document.getElementById('detailAmount').textContent = '₱' + parseInt(amount).toFixed(2);
+            document.getElementById('refNumber').textContent = ref;
+            document.getElementById('paymentDate').textContent = new Date().toLocaleDateString('en-US', {
+                year: 'numeric', month: 'short', day: 'numeric'
+            });
+
+            // Pay button
+            document.getElementById('payButton').addEventListener('click', function() {
+                const overlay = document.getElementById('processingOverlay');
+                overlay.classList.add('active');
+
+                // Simulate processing delay
+                setTimeout(function() {
+                    if (redirectUrl) {
+                        window.location.href = decodeURIComponent(redirectUrl);
+                    } else {
+                        alert('Payment simulated successfully! In production, this redirects back from GCash.');
+                        window.history.back();
+                    }
+                }, 2500);
+            });
+
+            // Cancel link
+            document.getElementById('cancelLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Cancel this payment?')) {
+                    window.history.back();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

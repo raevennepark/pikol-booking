@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cedon Pickleball Court - Book Now</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- GPS Floating Button -->
+    <a href="https://www.google.com/maps/search/?api=1&query=10.160850,124.309307" 
+       target="_blank" 
+       class="gps-fab" 
+       aria-label="Open location in Google Maps">
+        <i class="fas fa-location-dot"></i>
+        <span class="gps-tooltip">Find us on Maps</span>
+    </a>
+
+    <!-- Main App Container -->
+    <div class="app-container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-wrapper">
+                    <img src="assets/logo.png" alt="Cedon Pickleball Court" class="logo-img">
+                </div>
+                <div class="location-badge">
+                    <i class="fas fa-map-pin"></i>
+                    <span>P5, San Francisco, Talibon, Bohol</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Calendar View -->
+        <section id="calendarView" class="view active">
+            <div class="view-header">
+                <h1 class="view-title">Select a Date</h1>
+                <p class="view-subtitle">Choose your preferred playing day</p>
+            </div>
+
+            <div class="calendar-card">
+                <div class="calendar-nav">
+                    <button id="prevMonth" class="nav-btn" disabled aria-label="Previous month">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="month-display">
+                        <i class="far fa-calendar-alt"></i>
+                        <span id="monthYear">August 2026</span>
+                    </div>
+                    <button id="nextMonth" class="nav-btn" aria-label="Next month">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="day-labels">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div id="daysGrid" class="days-grid"></div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-card">
+                    <div class="info-icon morning">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="info-text">
+                        <h3>Morning Session</h3>
+                        <p>5:00 AM – 7:00 AM</p>
+                        <span class="rate">₱150 / hour</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon evening">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    <div class="info-text">
+                        <h3>Evening Session</h3>
+                        <p>4:00 PM – 12:00 AM</p>
+                        <span class="rate">₱200 / hour</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Schedule View -->
+        <section id="scheduleView" class="view">
+            <div class="view-header schedule-header">
+                <button id="backToCalendar" class="back-btn" aria-label="Back to calendar">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+                <div class="schedule-title-group">
+                    <h1 class="view-title">Court Schedule</h1>
+                    <p id="selectedDateDisplay" class="view-subtitle">Tuesday, August 25, 2026</p>
+                </div>
+            </div>
+
+            <div class="legend-bar">
+                <div class="legend-item">
+                    <span class="dot open"></span>
+                    <span>Open</span>
+                </div>
+                <div class="legend-item">
+                    <span class="dot selected"></span>
+                    <span>Selected</span>
+                </div>
+                <div class="legend-item">
+                    <span class="dot booked"></span>
+                    <span>Booked</span>
+                </div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="court-header">
+                    <span class="court-label">Court 1</span>
+                    <span class="court-status available">Available</span>
+                </div>
+                <div id="timeSlots" class="time-slots"></div>
+            </div>
+        </section>
+
+        <!-- Booking Prompt (Bottom Sheet) -->
+        <div id="bookingPrompt" class="bottom-sheet">
+            <div class="sheet-content">
+                <div class="sheet-handle"></div>
+                <div class="sheet-body">
+                    <div class="sheet-info">
+                        <h3>Confirm Booking</h3>
+                        <p id="promptSlotInfo">11:00 PM – 12:00 AM</p>
+                    </div>
+                    <div class="sheet-actions">
+                        <button id="cancelSelection" class="btn btn-outline">Cancel</button>
+                        <button id="confirmBooking" class="btn btn-primary">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt Modal -->
+        <div id="receiptModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Booking Receipt</h2>
+                    <button class="modal-close" aria-label="Close modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="receipt-logo">
+                        <img src="assets/logo.png" alt="Cedon">
+                    </div>
+                    <div class="receipt-details">
+                        <div class="receipt-row">
+                            <span>Date</span>
+                            <span id="receiptDate">August 25, 2026</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Time</span>
+                            <span id="receiptTime">11:00 PM – 12:00 AM</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Court</span>
+                            <span>Court 1</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span>Rate</span>
+                            <span id="receiptRate">₱200 / hour</span>
+                        </div>
+                        <div class="receipt-divider"></div>
+                        <div class="receipt-row total">
+                            <span>Total Amount</span>
+                            <span id="receiptTotal">₱200</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelReceipt" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="continuePayment" class="btn btn-primary btn-lg">
+                        <i class="fas fa-wallet"></i>
+                        Continue to Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Options Modal -->
+        <div id="paymentOptionsModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Choose Payment Method</h2>
+                    <button class="modal-close-payment" aria-label="Close modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body payment-options-body">
+                    <div class="payment-methods" id="paymentMethodsList">
+                        <div class="payment-method-card" id="hostedGatewayBtn">
+                            <div class="pm-icon">
+                                <i class="fas fa-external-link-alt"></i>
+                            </div>
+                            <div class="pm-info">
+                                <h3>Pay via Hosted Gateway</h3>
+                                <p>Secure checkout via PayMongo / Xendit / HitPay</p>
+                            </div>
+                            <i class="fas fa-chevron-right pm-arrow"></i>
+                        </div>
+
+                        <div class="payment-method-card" id="gcashQRBtn">
+                            <div class="pm-icon gcash">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <div class="pm-info">
+                                <h3>Scan GCash QR Code</h3>
+                                <p>Open GCash app and scan to pay</p>
+                            </div>
+                            <i class="fas fa-chevron-right pm-arrow"></i>
+                        </div>
+                    </div>
+
+                    <div id="qrCodeSection" class="qr-section hidden">
+                        <div class="qr-container">
+                            <img id="qrCodeImage" src="assets/gcash-qr.png" alt="GCash QR Code" onerror="this.style.display='none'">
+                            <div id="qrFallback" class="qr-placeholder">
+                                <i class="fas fa-qrcode"></i>
+                                <p>Upload your GCash QR code image<br>to <code>assets/gcash-qr.png</code></p>
+                            </div>
+                        </div>
+                        <div class="qr-instructions">
+                            <ol>
+                                <li>Open your <strong>GCash app</strong></li>
+                                <li>Tap <strong>Pay QR</strong></li>
+                                <li>Scan the code above</li>
+                                <li>Enter amount: <strong id="qrAmount">₱200</strong></li>
+                            </ol>
+                        </div>
+                        <button id="confirmManualPayment" class="btn btn-primary btn-lg" style="width:100%; margin-top:16px;">
+                            <i class="fas fa-check-circle"></i>
+                            I've Paid — Confirm Booking
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer" id="paymentOptionsFooter">
+                    <button id="backToReceipt" class="btn btn-outline btn-lg">Back</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Success Modal -->
+        <div id="successModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content success-content">
+                <div class="success-animation">
+                    <div class="checkmark-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+                <h2>Payment Complete!</h2>
+                <p>Your court has been successfully booked.</p>
+                <div class="success-details">
+                    <p id="successDate">August 25, 2026</p>
+                    <p id="successTime">11:00 PM – 12:00 AM</p>
+                </div>
+                <button id="backToCalendarSuccess" class="btn btn-primary btn-lg">
+                    Back to Calendar
+                </button>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">
+            <i class="fas fa-info-circle"></i>
+            <span id="toastMessage">Notification</span>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
