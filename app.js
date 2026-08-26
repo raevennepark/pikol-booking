@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function generateDemoBookings() {
         const bookings = {};
-        const t = state.today;
+        const t = today;
 
         const todayKey = dateKey(t);
         bookings[todayKey] = [17, 19, 20];
