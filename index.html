@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cedon Pickleball Court - Book Now</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @keyframes gpsPulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.7), 0 4px 14px rgba(212, 168, 83, 0.3); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 168, 83, 0), 0 4px 14px rgba(212, 168, 83, 0.3); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0), 0 4px 14px rgba(212, 168, 83, 0.3); }
+        }
+        .gps-fab { animation: gpsPulse 5s infinite; }
+        .gps-fab .gps-tooltip { display: none !important; }
+    </style>
+</head>
+<body>
+    <a href="https://www.google.com/maps/search/?api=1&query=10.160850,124.309307" 
+       target="_blank" 
+       class="gps-fab" 
+       aria-label="Open location in Google Maps">
+        <i class="fas fa-location-dot"></i>
+    </a>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-wrapper">
+                    <img src="logo.png" alt="Cedon Pickleball Court" class="logo-img">
+                </div>
+                <div class="location-badge">
+                    <i class="fas fa-map-pin"></i>
+                    <span>P5, San Francisco, Talibon, Bohol</span>
+                </div>
+            </div>
+        </header>
+
+        <section id="calendarView" class="view active">
+            <div class="view-header">
+                <h1 class="view-title">Select a Date</h1>
+                <p class="view-subtitle">Choose your preferred playing day</p>
+            </div>
+
+            <div class="calendar-card">
+                <div class="calendar-nav">
+                    <button id="prevMonth" class="nav-btn" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="month-display">
+                        <i class="far fa-calendar-alt"></i>
+                        <span id="monthYear">Loading...</span>
+                    </div>
+                    <button id="nextMonth" class="nav-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="day-labels">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div id="daysGrid" class="days-grid"></div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-card">
+                    <div class="info-icon morning"><i class="fas fa-sun"></i></div>
+                    <div class="info-text">
+                        <h3>Morning Session</h3>
+                        <p>5:00 AM – 7:00 AM</p>
+                        <span class="rate">₱150 / hour</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon evening"><i class="fas fa-moon"></i></div>
+                    <div class="info-text">
+                        <h3>Evening Session</h3>
+                        <p>4:00 PM – 12:00 AM</p>
+                        <span class="rate">₱200 / hour</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scheduleView" class="view">
+            <div class="view-header schedule-header">
+                <button id="backToCalendar" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+                <div class="schedule-title-group">
+                    <h1 class="view-title">Court Schedule</h1>
+                    <p id="selectedDateDisplay" class="view-subtitle">Select a date</p>
+                </div>
+            </div>
+
+            <div class="legend-bar">
+                <div class="legend-item"><span class="dot open"></span><span>Open</span></div>
+                <div class="legend-item"><span class="dot selected"></span><span>Selected</span></div>
+                <div class="legend-item"><span class="dot booked"></span><span>Booked</span></div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="court-header">
+                    <span class="court-label">Court 1</span>
+                    <span class="court-status available">Available</span>
+                </div>
+                <div id="timeSlots" class="time-slots"></div>
+            </div>
+        </section>
+
+        <div id="bookingPrompt" class="bottom-sheet">
+            <div class="sheet-content">
+                <div class="sheet-handle"></div>
+                <div class="sheet-body">
+                    <div class="sheet-info" id="sheetInfo">
+                        <h3>Confirm Booking</h3>
+                        <p id="promptSlotInfo">Select time slots</p>
+                    </div>
+                    <div class="sheet-actions">
+                        <button id="cancelSelection" class="btn btn-outline">Cancel</button>
+                        <button id="confirmBooking" class="btn btn-primary">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="receiptModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Booking Receipt</h2>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="receipt-logo"><img src="logo.png" alt="Cedon"></div>
+                    <div class="receipt-details">
+                        <div class="receipt-row"><span>Date</span><span id="receiptDate">-</span></div>
+                        <div class="receipt-row"><span>Time Slots</span><span id="receiptTime">-</span></div>
+                        <div class="receipt-row"><span>Court</span><span>Court 1</span></div>
+                        <div class="receipt-row"><span>Rate</span><span id="receiptRate">-</span></div>
+                        <div class="receipt-divider"></div>
+                        <div class="receipt-row total"><span>Total Amount</span><span id="receiptTotal">-</span></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelReceipt" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="continuePayment" class="btn btn-primary btn-lg"><i class="fas fa-wallet"></i>Continue to Payment</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="successModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content success-content">
+                <div class="success-animation"><div class="checkmark-circle"><i class="fas fa-check"></i></div></div>
+                <h2>Payment Complete!</h2>
+                <p>Your court has been successfully booked.</p>
+                <div class="success-details"><p id="successDate">-</p><p id="successTime">-</p></div>
+                <button id="backToCalendarSuccess" class="btn btn-primary btn-lg">Back to Calendar</button>
+            </div>
+        </div>
+
+        <div id="toast" class="toast"><i class="fas fa-info-circle"></i><span id="toastMessage">Notification</span></div>
+    </div>
+
+    <script>
+    (function(){
+        var today = new Date();
+        var currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        var selectedDate = null;
+        var selectedSlots = []; // MULTI-SELECT: array of slots
+        var bookings = {};
+
+        try {
+            var stored = localStorage.getItem('cedon_bookings_v1');
+            if (stored) bookings = JSON.parse(stored);
+        } catch(e) {}
+
+        function fmtMonthYear(d) {
+            return d.toLocaleDateString('en-US', {year:'numeric', month:'long'});
+        }
+        function fmtDate(d) {
+            return d.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        }
+        function fmtShortDate(d) {
+            return d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+        }
+        function fmtTime(h) {
+            var ampm = function(x){return x>=12?'PM':'AM';};
+            var disp = function(x){return x%12===0?12:x%12;};
+            return disp(h)+':00 '+ampm(h)+' – '+disp(h+1)+':00 '+ampm(h+1);
+        }
+        function dKey(d) {
+            return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+        }
+        function sameDay(a,b) {
+            return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+        }
+        function isPast(d) {
+            var t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            return x < t;
+        }
+        function isToday(d) { return sameDay(d, today); }
+        function slotPast(d, h) { return sameDay(d, today) && h < today.getHours(); }
+        function slotBooked(d, h) { var k=dKey(d); return bookings[k] && bookings[k].includes(h); }
+        function slotSelected(h) {
+            for (var i=0; i<selectedSlots.length; i++) {
+                if (selectedSlots[i].hour === h) return true;
+            }
+            return false;
+        }
+        function removeSlot(h) {
+            selectedSlots = selectedSlots.filter(function(s){return s.hour !== h;});
+        }
+        function getTotal() {
+            var total = 0;
+            for (var i=0; i<selectedSlots.length; i++) total += selectedSlots[i].rate;
+            return total;
+        }
+        function getSlotTimesText() {
+            if (selectedSlots.length === 0) return 'None selected';
+            if (selectedSlots.length === 1) return fmtTime(selectedSlots[0].hour);
+            // Sort by hour
+            var sorted = selectedSlots.slice().sort(function(a,b){return a.hour-b.hour;});
+            var parts = [];
+            for (var i=0; i<sorted.length; i++) parts.push(fmtTime(sorted[i].hour));
+            return parts.join(', ');
+        }
+
+        function renderCalendar() {
+            var year = currentMonth.getFullYear();
+            var month = currentMonth.getMonth();
+            document.getElementById('monthYear').textContent = fmtMonthYear(currentMonth);
+
+            var todayStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            var currStart = new Date(year, month, 1);
+            var maxMonth = new Date(today.getFullYear(), today.getMonth()+1, 1);
+            document.getElementById('prevMonth').disabled = currStart.getTime() <= todayStart.getTime();
+            document.getElementById('nextMonth').disabled = currStart.getTime() >= maxMonth.getTime();
+
+            var grid = document.getElementById('daysGrid');
+            grid.innerHTML = '';
+
+            var firstDay = new Date(year, month, 1).getDay();
+            var daysInMonth = new Date(year, month+1, 0).getDate();
+
+            for (var i=0; i<firstDay; i++) {
+                var cell = document.createElement('div');
+                cell.className = 'day-cell empty';
+                grid.appendChild(cell);
+            }
+            for (var day=1; day<=daysInMonth; day++) {
+                var date = new Date(year, month, day);
+                var cell = document.createElement('div');
+                cell.className = 'day-cell';
+                cell.textContent = day;
+                if (isToday(date)) cell.classList.add('today');
+                if (isPast(date)) {
+                    cell.classList.add('past');
+                } else {
+                    cell.onclick = (function(d){return function(){selectDate(d);};})(date);
+                }
+                if (selectedDate && sameDay(date, selectedDate)) cell.classList.add('selected-day');
+                grid.appendChild(cell);
+            }
+        }
+
+        function selectDate(date) {
+            if (isPast(date)) { showToast('Cannot book past dates'); return; }
+            selectedDate = date;
+            selectedSlots = [];
+            hideBookingPrompt();
+            renderCalendar();
+            switchView('schedule');
+            renderSchedule();
+        }
+
+        function switchView(name) {
+            document.getElementById('calendarView').classList.remove('active');
+            document.getElementById('scheduleView').classList.remove('active');
+            document.getElementById(name+'View').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function renderSchedule() {
+            if (!selectedDate) return;
+            document.getElementById('selectedDateDisplay').textContent = fmtDate(selectedDate);
+            var container = document.getElementById('timeSlots');
+            container.innerHTML = '';
+            var slots = [];
+            for (var h=5; h<7; h++) slots.push({hour:h, rate:150, label:'Morning Rate'});
+            for (var h=16; h<24; h++) slots.push({hour:h, rate:200, label:'Evening Rate'});
+
+            slots.forEach(function(slot) {
+                var isPast = slotPast(selectedDate, slot.hour);
+                var isBooked = slotBooked(selectedDate, slot.hour);
+                var isSelected = slotSelected(slot.hour);
+
+                var div = document.createElement('div');
+                div.className = 'time-slot';
+                if (isPast) div.classList.add('past-slot');
+                if (isSelected) div.classList.add('has-selected');
+
+                var statusClass='open', statusText='Open', clickable=true;
+                if (isPast) { statusClass='past'; statusText=''; clickable=false; }
+                else if (isBooked) { statusClass='booked'; statusText='Booked'; clickable=false; }
+                else if (isSelected) { statusClass='selected'; statusText='Selected'; }
+
+                div.innerHTML = '<div class="slot-info">' +
+                    '<span class="slot-time">'+fmtTime(slot.hour)+'</span>' +
+                    (!isPast?'<span class="slot-rate">₱'+slot.rate+' · '+slot.label+'</span>':'') +
+                    '</div>' +
+                    (statusText?'<span class="slot-status '+statusClass+'">'+statusText+'</span>':'<span></span>');
+
+                if (clickable && statusText) {
+                    div.querySelector('.slot-status').onclick = function(e) {
+                        e.stopPropagation();
+                        toggleSlot(slot);
+                    };
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function toggleSlot(slot) {
+            if (slotSelected(slot.hour)) {
+                removeSlot(slot.hour);
+                if (selectedSlots.length === 0) hideBookingPrompt();
+            } else {
+                selectedSlots.push(slot);
+            }
+            renderSchedule();
+            if (selectedSlots.length > 0) updateBookingPrompt();
+        }
+
+        function updateBookingPrompt() {
+            var count = selectedSlots.length;
+            var total = getTotal();
+            document.getElementById('promptSlotInfo').innerHTML =
+                fmtShortDate(selectedDate) + ' · ' + count + ' hour' + (count>1?'s':'') +
+                ' · ₱' + total;
+            document.getElementById('bookingPrompt').classList.add('active');
+        }
+
+        function deselectAllSlots() {
+            selectedSlots = [];
+            hideBookingPrompt();
+            renderSchedule();
+        }
+
+        function hideBookingPrompt() {
+            document.getElementById('bookingPrompt').classList.remove('active');
+        }
+
+        function showReceipt() {
+            if (selectedSlots.length === 0 || !selectedDate) return;
+            var total = getTotal();
+            document.getElementById('receiptDate').textContent = fmtDate(selectedDate);
+            document.getElementById('receiptTime').textContent = getSlotTimesText();
+            document.getElementById('receiptRate').textContent = '₱'+selectedSlots[0].rate+' / hour';
+            document.getElementById('receiptTotal').textContent = '₱'+total;
+            document.getElementById('receiptModal').classList.add('active');
+            hideBookingPrompt();
+        }
+
+        function hideReceipt() {
+            document.getElementById('receiptModal').classList.remove('active');
+        }
+
+        // DIRECT TO MOCK PAYMENT - no payment options modal
+        function processPayment() {
+            var total = getTotal();
+            var dk = dKey(selectedDate);
+            var hours = selectedSlots.map(function(s){return s.hour;}).join(',');
+            var base = window.location.href.split('?')[0];
+            var redirect = encodeURIComponent(base+'?payment=success&date='+dk+'&hours='+hours+'&amount='+total);
+            window.location.href = 'gcash-payment.html?amount='+total+'&redirect='+redirect+'&ref=CEDON-'+Date.now();
+        }
+
+        function handlePaymentReturn() {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('payment')==='success') {
+                var dk = params.get('date');
+                var hoursStr = params.get('hours');
+                if (dk && hoursStr) {
+                    var hours = hoursStr.split(',').map(function(h){return parseInt(h);});
+                    if (!bookings[dk]) bookings[dk]=[];
+                    hours.forEach(function(h){
+                        if (!bookings[dk].includes(h)) bookings[dk].push(h);
+                    });
+                    try { localStorage.setItem('cedon_bookings_v1', JSON.stringify(bookings)); } catch(e){}
+                    var date = new Date(dk+'T00:00:00');
+                    document.getElementById('successDate').textContent = fmtDate(date);
+                    var timeTexts = [];
+                    hours.forEach(function(h){timeTexts.push(fmtTime(h));});
+                    document.getElementById('successTime').textContent = timeTexts.join(', ');
+                    document.getElementById('successModal').classList.add('active');
+                    selectedSlots = [];
+                    selectedDate = date;
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        }
+
+        function hideSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+            switchView('calendar');
+            renderCalendar();
+        }
+
+        function showToast(msg) {
+            document.getElementById('toastMessage').textContent = msg;
+            document.getElementById('toast').classList.add('active');
+            setTimeout(function(){document.getElementById('toast').classList.remove('active');}, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('prevMonth').onclick = function() {
+            currentMonth.setMonth(currentMonth.getMonth()-1);
+            renderCalendar();
+        };
+        document.getElementById('nextMonth').onclick = function() {
+            currentMonth.setMonth(currentMonth.getMonth()+1);
+            renderCalendar();
+        };
+        document.getElementById('backToCalendar').onclick = function() {
+            selectedSlots = [];
+            hideBookingPrompt();
+            switchView('calendar');
+            renderCalendar();
+        };
+        document.getElementById('cancelSelection').onclick = deselectAllSlots;
+        document.getElementById('confirmBooking').onclick = showReceipt;
+        document.getElementById('cancelReceipt').onclick = function() {
+            hideReceipt();
+            selectedSlots = [];
+            renderSchedule();
+        };
+        // DIRECT TO PAYMENT - skip options modal
+        document.getElementById('continuePayment').onclick = processPayment;
+        document.querySelector('.modal-close').onclick = hideReceipt;
+        document.querySelectorAll('.modal-overlay').forEach(function(o){
+            o.onclick = function(e){ if(e.target===o){ hideReceipt(); hideSuccessModal(); } };
+        });
+        document.getElementById('backToCalendarSuccess').onclick = hideSuccessModal;
+        document.addEventListener('keydown', function(e) {
+            if (e.key==='Escape') { hideReceipt(); hideSuccessModal(); }
+        });
+
+        // Init
+        handlePaymentReturn();
+        renderCalendar();
+        console.log('Cedon Pickleball Court - Ready (Multi-select)');
+    })();
+    </script>
+</body>
+</html>
