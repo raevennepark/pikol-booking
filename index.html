@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cedon Pickleball Court - Book Now</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @keyframes gpsPulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.7), 0 4px 14px rgba(212, 168, 83, 0.3); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 168, 83, 0), 0 4px 14px rgba(212, 168, 83, 0.3); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0), 0 4px 14px rgba(212, 168, 83, 0.3); }
+        }
+        .gps-fab { animation: gpsPulse 5s infinite; }
+        .gps-fab .gps-tooltip { display: none !important; }
+
+        .menu-btn {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 95;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+        .menu-btn:hover { background: var(--bg-card-hover); border-color: var(--accent-gold); }
+
+        .menu-panel {
+            position: fixed;
+            top: 64px;
+            right: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px 0;
+            min-width: 180px;
+            z-index: 96;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        .menu-panel.active { display: block; }
+        .menu-panel .menu-item {
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-panel .menu-item:hover { background: var(--bg-card-hover); }
+        .menu-panel .menu-item i { color: var(--accent-gold); width: 18px; }
+        .menu-panel .menu-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 6px 0;
+        }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+        .form-group input::placeholder, .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+
+        .about-section {
+            margin-top: 32px;
+            padding: 0 20px 40px;
+        }
+        .about-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .about-card h2 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+        .about-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(45, 55, 72, 0.5);
+        }
+        .about-item:last-child { border-bottom: none; }
+        .about-item i {
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            margin-top: 2px;
+            width: 20px;
+        }
+        .about-item .about-text h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+        .about-item .about-text p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .about-item .about-text .gps-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .suggestion-section {
+            padding: 0 20px 40px;
+        }
+        .suggestion-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .suggestion-card h2 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .suggestion-card .anon-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .suggestion-card .anon-note i { color: var(--accent-gold); }
+
+        .admin-login-body { padding: 30px 24px; text-align: center; }
+        .admin-login-body .admin-avatar {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.5rem;
+            color: var(--bg-primary);
+        }
+        .admin-login-body h3 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .admin-panel-body { padding: 0; }
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+        .admin-tab {
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .admin-tab.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+        .admin-tab:hover:not(.active) { color: var(--text-secondary); }
+
+        .admin-tab-content { display: none; padding: 20px; max-height: 60vh; overflow-y: auto; }
+        .admin-tab-content.active { display: block; }
+
+        .booking-list-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+        .booking-list-item .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .booking-list-item .booking-header h4 {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .booking-list-item .booking-header .booking-status {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .booking-status.paid { background: var(--color-open-bg); color: var(--color-open); }
+        .booking-status.manual { background: var(--color-selected-bg); color: var(--color-selected); }
+        .booking-list-item p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin: 3px 0;
+        }
+        .booking-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .booking-actions .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            flex: none;
+        }
+
+        .suggestion-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+        .suggestion-item .suggestion-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .suggestion-item p {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        .suggestion-item .delete-suggestion {
+            float: right;
+            color: var(--color-booked);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: -4px;
+        }
+
+        .admin-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+        .admin-empty i { font-size: 2rem; margin-bottom: 12px; display: block; }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(90deg, rgba(212,168,83,0.08), transparent);
+        }
+        .admin-profile .admin-avatar-sm {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--bg-primary);
+        }
+        .admin-profile .admin-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .admin-profile .admin-role {
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+        }
+
+        .admin-logout {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .admin-logout button { width: 100%; }
+
+        .about-editor .form-group { margin-bottom: 12px; }
+        .about-editor .form-group label { font-size: 0.8rem; }
+        .multi-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .multi-input-row input { flex: 1; }
+        .multi-input-row button {
+            background: var(--color-booked-bg);
+            color: var(--color-booked);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 8px;
+            width: 36px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .add-field-btn {
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border-color);
+            color: var(--text-secondary);
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 4px;
+            transition: all 0.2s ease;
+        }
+        .add-field-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu"><i class="fas fa-ellipsis-v"></i></button>
+    <div class="menu-panel" id="menuPanel">
+        <div class="menu-item" id="menuAdmin"><i class="fas fa-user-shield"></i> Admin Login</div>
+        <div class="menu-divider"></div>
+        <div class="menu-item" id="menuAbout"><i class="fas fa-info-circle"></i> About Us</div>
+        <div class="menu-item" id="menuSuggest"><i class="fas fa-comment-dots"></i> Send Feedback</div>
+    </div>
+
+    <a href="https://www.google.com/maps/search/?api=1&query=10.160850,124.309307" target="_blank" class="gps-fab" aria-label="Open location in Google Maps">
+        <i class="fas fa-location-dot"></i>
+    </a>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-wrapper"><img src="logo.png" alt="Cedon Pickleball Court" class="logo-img"></div>
+                <div class="location-badge"><i class="fas fa-map-pin"></i><span>P5, San Francisco, Talibon, Bohol</span></div>
+            </div>
+        </header>
+
+        <section id="calendarView" class="view active">
+            <div class="view-header">
+                <h1 class="view-title">Select a Date</h1>
+                <p class="view-subtitle">Choose your preferred playing day</p>
+            </div>
+            <div class="calendar-card">
+                <div class="calendar-nav">
+                    <button id="prevMonth" class="nav-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                    <div class="month-display"><i class="far fa-calendar-alt"></i><span id="monthYear">Loading...</span></div>
+                    <button id="nextMonth" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid">
+                    <div class="day-labels"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+                    <div id="daysGrid" class="days-grid"></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <div class="info-card">
+                    <div class="info-icon morning"><i class="fas fa-sun"></i></div>
+                    <div class="info-text"><h3>Morning Session</h3><p>5:00 AM – 7:00 AM</p><span class="rate">₱150 / hour</span></div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon evening"><i class="fas fa-moon"></i></div>
+                    <div class="info-text"><h3>Evening Session</h3><p>4:00 PM – 12:00 AM</p><span class="rate">₱200 / hour</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scheduleView" class="view">
+            <div class="view-header schedule-header">
+                <button id="backToCalendar" class="back-btn"><i class="fas fa-arrow-left"></i><span>Back</span></button>
+                <div class="schedule-title-group"><h1 class="view-title">Court Schedule</h1><p id="selectedDateDisplay" class="view-subtitle">Select a date</p></div>
+            </div>
+            <div class="legend-bar">
+                <div class="legend-item"><span class="dot open"></span><span>Open</span></div>
+                <div class="legend-item"><span class="dot selected"></span><span>Selected</span></div>
+                <div class="legend-item"><span class="dot booked"></span><span>Booked</span></div>
+            </div>
+            <div class="schedule-card">
+                <div class="court-header"><span class="court-label">Court 1</span><span class="court-status available">Available</span></div>
+                <div id="timeSlots" class="time-slots"></div>
+            </div>
+        </section>
+
+        <div id="bookingPrompt" class="bottom-sheet">
+            <div class="sheet-content">
+                <div class="sheet-handle"></div>
+                <div class="sheet-body">
+                    <div class="sheet-info"><h3>Confirm Booking</h3><p id="promptSlotInfo">Select time slots</p></div>
+                    <div class="sheet-actions">
+                        <button id="cancelSelection" class="btn btn-outline">Cancel</button>
+                        <button id="confirmBooking" class="btn btn-primary">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="contactModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header"><h2>Your Contact Info</h2><button class="modal-close-contact"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <div class="form-group"><label>Full Name</label><input type="text" id="contactName" placeholder="Enter your full name"></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Phone Number</label><input type="tel" id="contactPhone" placeholder="09XX XXX XXXX"></div>
+                        <div class="form-group"><label>Email Address</label><input type="email" id="contactEmail" placeholder="you@email.com"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelContact" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="saveContact" class="btn btn-primary btn-lg"><i class="fas fa-arrow-right"></i>Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="receiptModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header"><h2>Booking Receipt</h2><button class="modal-close"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <div class="receipt-logo"><img src="logo.png" alt="Cedon"></div>
+                    <div class="receipt-details">
+                        <div class="receipt-row"><span>Recipient</span><span id="receiptRecipient">-</span></div>
+                        <div class="receipt-row"><span>Phone</span><span id="receiptPhone">-</span></div>
+                        <div class="receipt-row"><span>Email</span><span id="receiptEmail">-</span></div>
+                        <div class="receipt-divider"></div>
+                        <div class="receipt-row"><span>Date</span><span id="receiptDate">-</span></div>
+                        <div class="receipt-row"><span>Time Slots</span><span id="receiptTime">-</span></div>
+                        <div class="receipt-row"><span>Court</span><span>Court 1</span></div>
+                        <div class="receipt-row"><span>Rate</span><span id="receiptRate">-</span></div>
+                        <div class="receipt-divider"></div>
+                        <div class="receipt-row total"><span>Total Amount</span><span id="receiptTotal">-</span></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelReceipt" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="continuePayment" class="btn btn-primary btn-lg"><i class="fas fa-wallet"></i>Continue to Payment</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="successModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content success-content">
+                <div class="success-animation"><div class="checkmark-circle"><i class="fas fa-check"></i></div></div>
+                <h2>Payment Complete!</h2>
+                <p>Your court has been successfully booked.</p>
+                <div class="success-details"><p id="successDate">-</p><p id="successTime">-</p></div>
+                <button id="backToCalendarSuccess" class="btn btn-primary btn-lg">Back to Calendar</button>
+            </div>
+        </div>
+
+        <div id="adminLoginModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header"><h2>Admin Login</h2><button class="modal-close-login"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body admin-login-body">
+                    <div class="admin-avatar"><i class="fas fa-user-shield"></i></div>
+                    <h3>Administrator Access</h3>
+                    <div class="form-group" style="text-align:left;"><label>Username</label><input type="text" id="adminUser" placeholder="Enter username"></div>
+                    <div class="form-group" style="text-align:left;"><label>Password</label><input type="password" id="adminPass" placeholder="Enter password"></div>
+                    <button id="adminLoginBtn" class="btn btn-primary btn-lg" style="width:100%;margin-top:8px;">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="adminPanelModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content" style="max-width:500px;">
+                <div class="modal-header"><h2>Admin Panel</h2><button class="modal-close-admin"><i class="fas fa-times"></i></button></div>
+                <div class="admin-profile">
+                    <div class="admin-avatar-sm"><i class="fas fa-user"></i></div>
+                    <div><div class="admin-name">CHERACHE JUMILLA</div><div class="admin-role">Administrator</div></div>
+                </div>
+                <div class="admin-panel-body">
+                    <div class="admin-tabs">
+                        <div class="admin-tab active" data-tab="bookings">Bookings</div>
+                        <div class="admin-tab" data-tab="suggestions">Messages</div>
+                        <div class="admin-tab" data-tab="about">About Us</div>
+                    </div>
+                    <div class="admin-tab-content active" id="tab-bookings"><div id="adminBookingsList"></div></div>
+                    <div class="admin-tab-content" id="tab-suggestions"><div id="adminSuggestionsList"></div></div>
+                    <div class="admin-tab-content" id="tab-about"><div class="about-editor" id="aboutEditor"></div></div>
+                </div>
+                <div class="admin-logout"><button id="adminLogoutBtn" class="btn btn-outline btn-lg"><i class="fas fa-sign-out-alt"></i> Log Out</button></div>
+            </div>
+        </div>
+
+        <div id="suggestionModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header"><h2>Send Feedback</h2><button class="modal-close-suggest"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:16px;"><i class="fas fa-user-secret" style="color:var(--accent-gold);margin-right:6px;"></i>Your identity will remain completely anonymous. No personal information is collected.</p>
+                    <div class="form-group"><label>Your Message</label><textarea id="suggestionText" rows="5" placeholder="Share your suggestions, concerns, or feedback..."></textarea></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelSuggestion" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="sendSuggestion" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane"></i>Send</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast"><i class="fas fa-info-circle"></i><span id="toastMessage">Notification</span></div>
+
+        <div class="about-section" id="aboutSection">
+            <div class="about-card">
+                <h2><i class="fas fa-info-circle" style="color:var(--accent-gold);margin-right:8px;"></i>About Us</h2>
+                <div id="aboutContent"></div>
+            </div>
+        </div>
+
+        <div class="suggestion-section" id="suggestionSection">
+            <div class="suggestion-card">
+                <h2><i class="fas fa-comment-dots" style="color:var(--accent-gold);margin-right:8px;"></i>Send Feedback</h2>
+                <p class="anon-note"><i class="fas fa-user-secret"></i>Your identity will remain completely anonymous. No personal information is collected.</p>
+                <div class="form-group"><textarea id="suggestionTextInline" rows="4" placeholder="Share your suggestions, concerns, or feedback..."></textarea></div>
+                <button id="sendSuggestionInline" class="btn btn-primary" style="width:100%;"><i class="fas fa-paper-plane"></i>Send Anonymously</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        var ADMIN_USER='CHERACHE JUMILLA';
+        var ADMIN_PASS='cheyenneeldestroroyoungest2026';
+        var SK={bookings:'cedon_bookings_v2',suggestions:'cedon_suggestions_v1',aboutUs:'cedon_aboutus_v1',adminSession:'cedon_admin_session'};
+        var today=new Date();
+        var currentMonth=new Date(today.getFullYear(),today.getMonth(),1);
+        var selectedDate=null;
+        var selectedSlots=[];
+        var currentContact={name:'',phone:'',email:''};
+        var isAdmin=false;
+        var bookings={};
+        var suggestions=[];
+        var aboutUsData={address:'P5, San Francisco, Talibon, Bohol',phones:['639107583114'],emails:['jumillacharmie@gmail.com'],gpsHint:'Click the GPS button to find us on Google Maps'};
+
+        function loadData(){
+            try{var b=localStorage.getItem(SK.bookings);if(b)bookings=JSON.parse(b);}catch(e){}
+            try{var s=localStorage.getItem(SK.suggestions);if(s)suggestions=JSON.parse(s);}catch(e){}
+            try{var a=localStorage.getItem(SK.aboutUs);if(a)aboutUsData=JSON.parse(a);}catch(e){}
+            try{var adm=localStorage.getItem(SK.adminSession);if(adm==='true')isAdmin=true;}catch(e){}
+        }
+        function saveB(){localStorage.setItem(SK.bookings,JSON.stringify(bookings));}
+        function saveS(){localStorage.setItem(SK.suggestions,JSON.stringify(suggestions));}
+        function saveA(){localStorage.setItem(SK.aboutUs,JSON.stringify(aboutUsData));}
+
+        function fmtMY(d){return d.toLocaleDateString('en-US',{year:'numeric',month:'long'});}
+        function fmtD(d){return d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}
+        function fmtSD(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+        function fmtT(h){var ap=function(x){return x>=12?'PM':'AM';};var ds=function(x){return x%12===0?12:x%12;};return ds(h)+':00 '+ap(h)+' – '+ds(h+1)+':00 '+ap(h+1);}
+        function dK(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+        function sD(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+        function isP(d){var t=new Date(today.getFullYear(),today.getMonth(),today.getDate());var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());return x<t;}
+        function isT(d){return sD(d,today);}
+        function sPa(d,h){return sD(d,today)&&h<today.getHours();}
+        function sBo(d,h){var k=dK(d);return bookings[k]&&bookings[k].some(function(b){return b.hour===h;});}
+        function sSe(h){return selectedSlots.some(function(s){return s.hour===h;});}
+        function rS(h){selectedSlots=selectedSlots.filter(function(s){return s.hour!==h;});}
+        function gT(){var t=0;for(var i=0;i<selectedSlots.length;i++)t+=selectedSlots[i].rate;return t;}
+        function gST(){if(selectedSlots.length===0)return'None selected';var sorted=selectedSlots.slice().sort(function(a,b){return a.hour-b.hour;});var parts=[];for(var i=0;i<sorted.length;i++)parts.push(fmtT(sorted[i].hour));return parts.join(', ');}
+
+        function rC(){
+            var year=currentMonth.getFullYear(),month=currentMonth.getMonth();
+            document.getElementById('monthYear').textContent=fmtMY(currentMonth);
+            var tS=new Date(today.getFullYear(),today.getMonth(),1);
+            var cS=new Date(year,month,1);
+            var mM=new Date(today.getFullYear(),today.getMonth()+1,1);
+            document.getElementById('prevMonth').disabled=cS.getTime()<=tS.getTime();
+            document.getElementById('nextMonth').disabled=cS.getTime()>=mM.getTime();
+            var grid=document.getElementById('daysGrid');grid.innerHTML='';
+            var fD=new Date(year,month,1).getDay();
+            var dIM=new Date(year,month+1,0).getDate();
+            for(var i=0;i<fD;i++){var c=document.createElement('div');c.className='day-cell empty';grid.appendChild(c);}
+            for(var day=1;day<=dIM;day++){
+                var date=new Date(year,month,day);
+                var cell=document.createElement('div');cell.className='day-cell';cell.textContent=day;
+                if(isT(date))cell.classList.add('today');
+                if(isP(date)){cell.classList.add('past');}else{cell.onclick=(function(d){return function(){sD2(d);};})(date);}
+                if(selectedDate&&sD(date,selectedDate))cell.classList.add('selected-day');
+                grid.appendChild(cell);
+            }
+        }
+        function sD2(date){if(isP(date)){showToast('Cannot book past dates');return;}selectedDate=date;selectedSlots=[];hBP();rC();sV('schedule');rS2();}
+        function sV(name){document.getElementById('calendarView').classList.remove('active');document.getElementById('scheduleView').classList.remove('active');document.getElementById(name+'View').classList.add('active');window.scrollTo(0,0);}
+
+        function rS2(){
+            if(!selectedDate)return;
+            document.getElementById('selectedDateDisplay').textContent=fmtD(selectedDate);
+            var container=document.getElementById('timeSlots');container.innerHTML='';
+            var slots=[];
+            for(var h=5;h<7;h++)slots.push({hour:h,rate:150,label:'Morning Rate'});
+            for(var h=16;h<24;h++)slots.push({hour:h,rate:200,label:'Evening Rate'});
+            slots.forEach(function(slot){
+                var isPa=sPa(selectedDate,slot.hour);
+                var isBo=sBo(selectedDate,slot.hour);
+                var isSe=sSe(slot.hour);
+                var div=document.createElement('div');div.className='time-slot';
+                if(isPa)div.classList.add('past-slot');
+                if(isSe)div.classList.add('has-selected');
+                var sc='open',st='Open',clickable=true;
+                if(isPa){sc='past';st='';clickable=false;}
+                else if(isBo){sc='booked';st='Booked';clickable=false;}
+                else if(isSe){sc='selected';st='Selected';}
+                div.innerHTML='<div class="slot-info"><span class="slot-time">'+fmtT(slot.hour)+'</span>'+(!isPa?'<span class="slot-rate">₱'+slot.rate+' · '+slot.label+'</span>':'')+'</div>'+(st?'<span class="slot-status '+sc+'">'+st+'</span>':'<span></span>');
+                if(clickable&&st){div.querySelector('.slot-status').onclick=function(e){e.stopPropagation();tS(slot);};}
+                container.appendChild(div);
+            });
+        }
+        function tS(slot){if(sSe(slot.hour)){rS(slot.hour);if(selectedSlots.length===0)hBP();}else{selectedSlots.push(slot);}rS2();if(selectedSlots.length>0)uBP();}
+        function uBP(){var count=selectedSlots.length,total=gT();document.getElementById('promptSlotInfo').innerHTML=fmtSD(selectedDate)+' · '+count+' hour'+(count>1?'s':'')+' · ₱'+total;document.getElementById('bookingPrompt').classList.add('active');}
+        function dAS(){selectedSlots=[];hBP();rS2();}
+        function hBP(){document.getElementById('bookingPrompt').classList.remove('active');}
+
+        function sCF(){document.getElementById('contactModal').classList.add('active');document.getElementById('contactName').value=currentContact.name;document.getElementById('contactPhone').value=currentContact.phone;document.getElementById('contactEmail').value=currentContact.email;}
+        function hCF(){document.getElementById('contactModal').classList.remove('active');}
+        function vC(){var name=document.getElementById('contactName').value.trim();var phone=document.getElementById('contactPhone').value.trim();var email=document.getElementById('contactEmail').value.trim();if(!name){showToast('Please enter your name');return false;}if(!phone){showToast('Please enter your phone number');return false;}if(!email){showToast('Please enter your email address');return false;}currentContact={name:name,phone:phone,email:email};return true;}
+
+        function sR(){if(selectedSlots.length===0||!selectedDate)return;var total=gT();document.getElementById('receiptRecipient').textContent=currentContact.name;document.getElementById('receiptPhone').textContent=currentContact.phone;document.getElementById('receiptEmail').textContent=currentContact.email;document.getElementById('receiptDate').textContent=fmtD(selectedDate);document.getElementById('receiptTime').textContent=gST();document.getElementById('receiptRate').textContent='₱'+selectedSlots[0].rate+' / hour';document.getElementById('receiptTotal').textContent='₱'+total;document.getElementById('receiptModal').classList.add('active');hBP();}
+        function hR(){document.getElementById('receiptModal').classList.remove('active');}
+
+        function pP(){var total=gT();var dk=dK(selectedDate);var hours=selectedSlots.map(function(s){return s.hour;}).join(',');var base=window.location.href.split('?')[0];var redirect=encodeURIComponent(base+'?payment=success&date='+dk+'&hours='+hours+'&amount='+total+'&name='+encodeURIComponent(currentContact.name)+'&phone='+encodeURIComponent(currentContact.phone)+'&email='+encodeURIComponent(currentContact.email));window.location.href='gcash-payment.html?amount='+total+'&redirect='+redirect+'&ref=CEDON-'+Date.now();}
+        function hPR(){var params=new URLSearchParams(window.location.search);if(params.get('payment')==='success'){var dk=params.get('date');var hoursStr=params.get('hours');var name=params.get('name')||'';var phone=params.get('phone')||'';var email=params.get('email')||'';if(dk&&hoursStr){var hours=hoursStr.split(',').map(function(h){return parseInt(h);});if(!bookings[dk])bookings[dk]=[];hours.forEach(function(h){if(!bookings[dk].some(function(b){return b.hour===h;})){bookings[dk].push({hour:h,name:name,phone:phone,email:email,paid:true});}});saveB();var date=new Date(dk+'T00:00:00');document.getElementById('successDate').textContent=fmtD(date);var timeTexts=[];hours.forEach(function(h){timeTexts.push(fmtT(h));});document.getElementById('successTime').textContent=timeTexts.join(', ');document.getElementById('successModal').classList.add('active');selectedSlots=[];selectedDate=date;window.history.replaceState({},document.title,window.location.pathname);}}}
+        function hSM(){document.getElementById('successModal').classList.remove('active');sV('calendar');rC();}
+
+        function rAU(){var container=document.getElementById('aboutContent');var html='';html+='<div class="about-item"><i class="fas fa-map-marker-alt"></i><div class="about-text"><h4>Address</h4><p>'+aboutUsData.address+'</p><p class="gps-hint">'+aboutUsData.gpsHint+'</p></div></div>';aboutUsData.phones.forEach(function(phone){html+='<div class="about-item"><i class="fas fa-phone"></i><div class="about-text"><h4>Phone Number</h4><p>'+phone+'</p></div></div>';});aboutUsData.emails.forEach(function(email){html+='<div class="about-item"><i class="fas fa-envelope"></i><div class="about-text"><h4>Email Address</h4><p>'+email+'</p></div></div>';});container.innerHTML=html;}
+
+        function sSM(){document.getElementById('suggestionModal').classList.add('active');}
+        function hSM2(){document.getElementById('suggestionModal').classList.remove('active');}
+        function sS(text){if(!text||!text.trim()){showToast('Please enter a message');return false;}suggestions.push({id:Date.now(),message:text.trim(),date:new Date().toISOString()});saveS();showToast('Feedback sent anonymously. Thank you!');return true;}
+
+        function sAL(){document.getElementById('adminLoginModal').classList.add('active');}
+        function hAL(){document.getElementById('adminLoginModal').classList.remove('active');}
+        function aL(){var user=document.getElementById('adminUser').value.trim();var pass=document.getElementById('adminPass').value;if(user===ADMIN_USER&&pass===ADMIN_PASS){isAdmin=true;localStorage.setItem(SK.adminSession,'true');hAL();sAP();showToast('Welcome, Administrator');}else{showToast('Invalid username or password');}}
+        function sAP(){document.getElementById('adminPanelModal').classList.add('active');rAB();rAS2();rAAE();}
+        function hAP(){document.getElementById('adminPanelModal').classList.remove('active');}
+        function aLO(){isAdmin=false;localStorage.removeItem(SK.adminSession);hAP();showToast('Logged out successfully');}
+        function rAB(){var container=document.getElementById('adminBookingsList');var hasBookings=false,html='';Object.keys(bookings).sort().reverse().forEach(function(dk){var list=bookings[dk];if(!list||list.length===0)return;hasBookings=true;var date=new Date(dk+'T00:00:00');list.forEach(function(b){var isPaid=b.paid===true;html+='<div class="booking-list-item">';html+='<div class="booking-header"><h4>'+fmtD(date)+' &mdash; '+fmtT(b.hour)+'</h4><span class="booking-status '+(isPaid?'paid':'manual')+'">'+(isPaid?'Paid':'Manual')+'</span></div>';html+='<p><strong>Name:</strong> '+(b.name||'-')+'</p>';html+='<p><strong>Phone:</strong> '+(b.phone||'-')+' | <strong>Email:</strong> '+(b.email||'-')+'</p>';html+='<div class="booking-actions">';html+='<button class="btn btn-outline btn-sm" onclick="window._uB(''+dk+'','+b.hour+')">Unbook</button>';html+='</div></div>';});});if(!hasBookings)html='<div class="admin-empty"><i class="fas fa-calendar-check"></i><p>No bookings yet</p></div>';container.innerHTML=html;}
+        window._uB=function(dk,hour){if(!bookings[dk])return;bookings[dk]=bookings[dk].filter(function(b){return b.hour!==hour;});if(bookings[dk].length===0)delete bookings[dk];saveB();rAB();rS2();showToast('Slot unbooked');};
+        function rAS2(){var container=document.getElementById('adminSuggestionsList');var html='';if(suggestions.length===0){html='<div class="admin-empty"><i class="fas fa-inbox"></i><p>No messages yet</p></div>';}else{suggestions.slice().reverse().forEach(function(s){var d=new Date(s.date);html+='<div class="suggestion-item">';html+='<span class="delete-suggestion" onclick="window._dS('+s.id+')">×</span>';html+='<div class="suggestion-date">'+d.toLocaleString()+'</div>';html+='<p>'+eH(s.message)+'</p></div>';});}container.innerHTML=html;}
+        window._dS=function(id){suggestions=suggestions.filter(function(s){return s.id!==id;});saveS();rAS2();showToast('Message deleted');};
+        function eH(text){var div=document.createElement('div');div.textContent=text;return div.innerHTML;}
+        function rAAE(){var container=document.getElementById('aboutEditor');var html='<div class="form-group"><label>Address</label><input type="text" id="editAddress" value="'+aboutUsData.address+'"></div>';html+='<div class="form-group"><label>Phone Numbers</label><div id="editPhones">';aboutUsData.phones.forEach(function(p,i){html+='<div class="multi-input-row"><input type="text" class="edit-phone" value="'+p+'"><button onclick="this.parentElement.remove()">×</button></div>';});html+='</div><button class="add-field-btn" onclick="aPF()"><i class="fas fa-plus"></i> Add Phone Number</button></div>';html+='<div class="form-group"><label>Email Addresses</label><div id="editEmails">';aboutUsData.emails.forEach(function(e,i){html+='<div class="multi-input-row"><input type="text" class="edit-email" value="'+e+'"><button onclick="this.parentElement.remove()">×</button></div>';});html+='</div><button class="add-field-btn" onclick="aEF()"><i class="fas fa-plus"></i> Add Email Address</button></div>';html+='<div class="form-group"><label>GPS Hint Text</label><input type="text" id="editGpsHint" value="'+aboutUsData.gpsHint+'"></div>';html+='<button class="btn btn-primary btn-lg" style="width:100%;margin-top:16px;" onclick="sAC()"><i class="fas fa-save"></i> Save Changes</button>';container.innerHTML=html;}
+        window.aPF=function(){var div=document.createElement('div');div.className='multi-input-row';div.innerHTML='<input type="text" class="edit-phone" placeholder="Phone number"><button onclick="this.parentElement.remove()">×</button>';document.getElementById('editPhones').appendChild(div);};
+        window.aEF=function(){var div=document.createElement('div');div.className='multi-input-row';div.innerHTML='<input type="text" class="edit-email" placeholder="Email address"><button onclick="this.parentElement.remove()">×</button>';document.getElementById('editEmails').appendChild(div);};
+        window.sAC=function(){aboutUsData.address=document.getElementById('editAddress').value;aboutUsData.gpsHint=document.getElementById('editGpsHint').value;var phones=[];document.querySelectorAll('.edit-phone').forEach(function(el){if(el.value.trim())phones.push(el.value.trim());});var emails=[];document.querySelectorAll('.edit-email').forEach(function(el){if(el.value.trim())emails.push(el.value.trim());});aboutUsData.phones=phones;aboutUsData.emails=emails;saveA();rAU();showToast('About Us updated');};
+
+        function tM(){var panel=document.getElementById('menuPanel');panel.classList.toggle('active');}
+        function cM(){document.getElementById('menuPanel').classList.remove('active');}
+        function showToast(msg){document.getElementById('toastMessage').textContent=msg;document.getElementById('toast').classList.add('active');setTimeout(function(){document.getElementById('toast').classList.remove('active');},3000);}
+
+        document.getElementById('prevMonth').onclick=function(){currentMonth.setMonth(currentMonth.getMonth()-1);rC();};
+        document.getElementById('nextMonth').onclick=function(){currentMonth.setMonth(currentMonth.getMonth()+1);rC();};
+        document.getElementById('backToCalendar').onclick=function(){selectedSlots=[];hBP();sV('calendar');rC();};
+        document.getElementById('cancelSelection').onclick=dAS;
+        document.getElementById('confirmBooking').onclick=sCF;
+        document.getElementById('cancelContact').onclick=hCF;
+        document.querySelector('.modal-close-contact').onclick=hCF;
+        document.getElementById('saveContact').onclick=function(){if(vC()){hCF();sR();}};
+        document.getElementById('cancelReceipt').onclick=function(){hR();selectedSlots=[];rS2();};
+        document.getElementById('continuePayment').onclick=pP;
+        document.querySelector('.modal-close').onclick=hR;
+        document.querySelectorAll('.modal-overlay').forEach(function(o){o.onclick=function(e){if(e.target===o){hR();hCF();hSM();hAL();hAP();hSM2();}};});
+        document.getElementById('backToCalendarSuccess').onclick=hSM;
+        document.getElementById('menuBtn').onclick=tM;
+        document.getElementById('menuAdmin').onclick=function(){cM();if(isAdmin){sAP();}else{sAL();}};
+        document.getElementById('menuAbout').onclick=function(){cM();document.getElementById('aboutSection').scrollIntoView({behavior:'smooth'});};
+        document.getElementById('menuSuggest').onclick=function(){cM();sSM();};
+        document.getElementById('adminLoginBtn').onclick=aL;
+        document.querySelector('.modal-close-login').onclick=hAL;
+        document.getElementById('adminLogoutBtn').onclick=aLO;
+        document.querySelector('.modal-close-admin').onclick=hAP;
+        document.querySelectorAll('.admin-tab').forEach(function(tab){tab.onclick=function(){document.querySelectorAll('.admin-tab').forEach(function(t){t.classList.remove('active');});document.querySelectorAll('.admin-tab-content').forEach(function(c){c.classList.remove('active');});tab.classList.add('active');document.getElementById('tab-'+tab.dataset.tab).classList.add('active');};});
+        document.getElementById('sendSuggestion').onclick=function(){var text=document.getElementById('suggestionText').value;if(sS(text)){document.getElementById('suggestionText').value='';hSM2();}};
+        document.getElementById('cancelSuggestion').onclick=hSM2;
+        document.querySelector('.modal-close-suggest').onclick=hSM2;
+        document.getElementById('sendSuggestionInline').onclick=function(){var text=document.getElementById('suggestionTextInline').value;if(sS(text)){document.getElementById('suggestionTextInline').value='';}};
+        document.addEventListener('click',function(e){var menuBtn=document.getElementById('menuBtn');var menuPanel=document.getElementById('menuPanel');if(!menuBtn.contains(e.target)&&!menuPanel.contains(e.target)){menuPanel.classList.remove('active');}});
+        document.addEventListener('keydown',function(e){if(e.key==='Escape'){hR();hCF();hSM();hAL();hAP();hSM2();}});
+
+        loadData();
+        hPR();
+        rC();
+        rAU();
+        console.log('Cedon Pickleball Court - Ready');
+    })();
+    </script>
+</body>
+</html>
