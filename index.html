@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cedon Pickleball Court - Book Now</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @keyframes gpsPulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.7), 0 4px 14px rgba(212, 168, 83, 0.3); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 168, 83, 0), 0 4px 14px rgba(212, 168, 83, 0.3); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0), 0 4px 14px rgba(212, 168, 83, 0.3); }
+        }
+        .gps-fab { animation: gpsPulse 5s infinite; }
+        .gps-fab .gps-tooltip { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- Menu Button -->
+    <button id="menuBtn" class="menu-btn" aria-label="Menu">
+        <i class="fas fa-ellipsis-v"></i>
+    </button>
+    <div id="menuPanel" class="menu-panel">
+        <div class="menu-item" id="adminMenuItem">
+            <span><i class="fas fa-user-shield" style="margin-right:8px;"></i> Admin</span>
+            <div class="menu-profile-empty"><i class="fas fa-user"></i></div>
+        </div>
+    </div>
+
+    <a href="https://www.google.com/maps/search/?api=1&query=10.160850,124.309307" 
+       target="_blank" 
+       class="gps-fab" 
+       aria-label="Open location in Google Maps">
+        <i class="fas fa-location-dot"></i>
+    </a>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-wrapper">
+                    <img src="logo.png" alt="Cedon Pickleball Court" class="logo-img">
+                </div>
+                <div class="location-badge">
+                    <i class="fas fa-map-pin"></i>
+                    <span>P5, San Francisco, Talibon, Bohol</span>
+                </div>
+            </div>
+        </header>
+
+        <section id="calendarView" class="view active">
+            <div class="view-header">
+                <h1 class="view-title">Select a Date</h1>
+                <p class="view-subtitle">Choose your preferred playing day</p>
+            </div>
+
+            <div class="calendar-card">
+                <div class="calendar-nav">
+                    <button id="prevMonth" class="nav-btn" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="month-display">
+                        <i class="far fa-calendar-alt"></i>
+                        <span id="monthYear">Loading...</span>
+                    </div>
+                    <button id="nextMonth" class="nav-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="day-labels">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div id="daysGrid" class="days-grid"></div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-card">
+                    <div class="info-icon morning"><i class="fas fa-sun"></i></div>
+                    <div class="info-text">
+                        <h3>Morning Session</h3>
+                        <p>5:00 AM – 7:00 AM</p>
+                        <span class="rate">₱150 / hour</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon evening"><i class="fas fa-moon"></i></div>
+                    <div class="info-text">
+                        <h3>Evening Session</h3>
+                        <p>4:00 PM – 12:00 AM</p>
+                        <span class="rate">₱200 / hour</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scheduleView" class="view">
+            <div class="view-header schedule-header">
+                <button id="backToCalendar" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+                <div class="schedule-title-group">
+                    <h1 class="view-title">Court Schedule</h1>
+                    <p id="selectedDateDisplay" class="view-subtitle">Select a date</p>
+                </div>
+            </div>
+
+            <div class="legend-bar">
+                <div class="legend-item"><span class="dot open"></span><span>Open</span></div>
+                <div class="legend-item"><span class="dot selected"></span><span>Selected</span></div>
+                <div class="legend-item"><span class="dot booked"></span><span>Booked</span></div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="court-header">
+                    <span class="court-label">Court 1</span>
+                    <span class="court-status available">Available</span>
+                </div>
+                <div id="timeSlots" class="time-slots"></div>
+            </div>
+        </section>
+
+        <div id="bookingPrompt" class="bottom-sheet">
+            <div class="sheet-content">
+                <div class="sheet-handle"></div>
+                <div class="sheet-body">
+                    <div class="sheet-info" id="sheetInfo">
+                        <h3>Confirm Booking</h3>
+                        <p id="promptSlotInfo">Select time slots</p>
+                    </div>
+                    <div class="sheet-actions">
+                        <button id="cancelSelection" class="btn btn-outline">Cancel</button>
+                        <button id="confirmBooking" class="btn btn-primary">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="receiptModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Booking Receipt</h2>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="receipt-logo"><img src="logo.png" alt="Cedon"></div>
+                    <div class="receipt-details">
+                        <div class="receipt-row"><span>Date</span><span id="receiptDate">-</span></div>
+                        <div class="receipt-row"><span>Time Slots</span><span id="receiptTime">-</span></div>
+                        <div class="receipt-row"><span>Court</span><span>Court 1</span></div>
+                        <div class="receipt-row"><span>Rate</span><span id="receiptRate">-</span></div>
+                        <div class="receipt-divider"></div>
+                        <div class="receipt-row total"><span>Total Amount</span><span id="receiptTotal">-</span></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelReceipt" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="continuePayment" class="btn btn-primary btn-lg"><i class="fas fa-wallet"></i>Continue to Payment</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="successModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content success-content">
+                <div class="success-animation"><div class="checkmark-circle"><i class="fas fa-check"></i></div></div>
+                <h2>Payment Complete!</h2>
+                <p>Your court has been successfully booked.</p>
+                <div class="success-details"><p id="successDate">-</p><p id="successTime">-</p></div>
+                <button id="backToCalendarSuccess" class="btn btn-primary btn-lg">Back to Calendar</button>
+            </div>
+        </div>
+
+        <!-- About Us Section -->
+        <section id="aboutUsSection" class="about-section">
+            <h2>About Us</h2>
+            <div class="about-card">
+                <div class="about-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h4>Address</h4>
+                        <p id="aboutAddress">P5, San Francisco, Talibon, Bohol</p>
+                        <p class="gps-hint">Click the GPS button to find us on Google Maps</p>
+                    </div>
+                </div>
+                <div class="about-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <h4>Phone</h4>
+                        <div id="aboutPhones"><p>639107583114</p></div>
+                    </div>
+                </div>
+                <div class="about-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h4>Email</h4>
+                        <div id="aboutEmails"><p>jumillacharmie@gmail.com</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suggestions Section -->
+        <section id="suggestionSection" class="suggestion-section">
+            <h2>Suggestions & Concerns</h2>
+            <p class="suggestion-note">Your identity will remain completely anonymous. Feel free to share your thoughts, suggestions, or concerns with us. No personal information is collected or stored with your message.</p>
+            <textarea id="suggestionText" placeholder="Type your suggestion or concern here..."></textarea>
+            <button id="submitSuggestion" class="btn btn-primary">Send Anonymously</button>
+            <div id="suggestionList" class="suggestion-list"></div>
+        </section>
+
+        <div id="toast" class="toast"><i class="fas fa-info-circle"></i><span id="toastMessage">Notification</span></div>
+    </div>
+
+    <!-- Contact Info Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Your Contact Information</h2>
+                <button class="modal-close-contact"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="contact-form">
+                    <label>Full Name</label>
+                    <input type="text" id="contactName" placeholder="Juan Dela Cruz">
+                    <label>Phone Number</label>
+                    <input type="tel" id="contactPhone" placeholder="09XX XXX XXXX">
+                    <label>Email Address</label>
+                    <input type="email" id="contactEmail" placeholder="you@example.com">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelContact" class="btn btn-outline">Cancel</button>
+                <button id="continueToPayment" class="btn btn-primary">Continue to Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Admin Login</h2>
+                <button class="modal-close-admin"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-profile-empty"><i class="fas fa-user-circle"></i></div>
+                <div class="contact-form">
+                    <input type="text" id="adminUsername" placeholder="Username">
+                    <input type="password" id="adminPassword" placeholder="Password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="adminLoginBtn" class="btn btn-primary btn-lg">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-header">
+            <h2><i class="fas fa-shield-alt"></i> Admin Dashboard</h2>
+            <button id="adminLogoutBtn" class="btn btn-outline">Logout</button>
+        </div>
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="bookings">Bookings</button>
+            <button class="admin-tab" data-tab="suggestions">Suggestions</button>
+            <button class="admin-tab" data-tab="about">About Us</button>
+        </div>
+        <div class="admin-content">
+            <div id="adminBookings" class="admin-tab-content active">
+                <div class="admin-form" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <input type="date" id="adminBookDate">
+                    <select id="adminBookHour">
+                        <option value="">Select Hour</option>
+                        <option value="5">5:00 AM – 6:00 AM</option>
+                        <option value="6">6:00 AM – 7:00 AM</option>
+                        <option value="16">4:00 PM – 5:00 PM</option>
+                        <option value="17">5:00 PM – 6:00 PM</option>
+                        <option value="18">6:00 PM – 7:00 PM</option>
+                        <option value="19">7:00 PM – 8:00 PM</option>
+                        <option value="20">8:00 PM – 9:00 PM</option>
+                        <option value="21">9:00 PM – 10:00 PM</option>
+                        <option value="22">10:00 PM – 11:00 PM</option>
+                        <option value="23">11:00 PM – 12:00 AM</option>
+                    </select>
+                    <input type="text" id="adminBookName" placeholder="Recipient Name">
+                    <input type="tel" id="adminBookPhone" placeholder="Phone Number">
+                    <input type="email" id="adminBookEmail" placeholder="Email Address" style="grid-column:1 / -1;">
+                    <button id="adminBookBtn" class="btn btn-primary" style="grid-column:1 / -1;">Book Slot (No Payment)</button>
+                </div>
+                <div id="adminBookingsList"></div>
+            </div>
+            <div id="adminSuggestions" class="admin-tab-content">
+                <div id="adminSuggestionsList"></div>
+            </div>
+            <div id="adminAbout" class="admin-tab-content">
+                <div class="admin-form">
+                    <label>Address</label>
+                    <textarea id="editAddress" rows="2"></textarea>
+                    <label>Phone Numbers</label>
+                    <div id="editPhonesList" class="about-editor-list"></div>
+                    <button id="addPhoneBtn" class="btn btn-outline" style="width:auto;align-self:flex-start;margin-bottom:16px;">+ Add Phone</button>
+                    <label>Email Addresses</label>
+                    <div id="editEmailsList" class="about-editor-list"></div>
+                    <button id="addEmailBtn" class="btn btn-outline" style="width:auto;align-self:flex-start;margin-bottom:16px;">+ Add Email</button>
+                    <button id="saveAboutBtn" class="btn btn-primary" style="margin-top:8px;">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        var today = new Date();
+        var currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        var selectedDate = null;
+        var selectedSlots = [];
+        var bookings = {};
+        var bookingDetails = {};
+        var suggestions = [];
+        var aboutUs = {
+            address: 'P5, San Francisco, Talibon, Bohol',
+            phones: ['639107583114'],
+            emails: ['jumillacharmie@gmail.com']
+        };
+        var tempContact = null;
+        var isAdminLoggedIn = false;
+        var adminTab = 'bookings';
+
+        var BK_KEY = 'cedon_bookings_v2';
+        var BK_OLD = 'cedon_bookings_v1';
+        var DET_KEY = 'cedon_booking_details_v1';
+        var SUG_KEY = 'cedon_suggestions_v1';
+        var ABT_KEY = 'cedon_about_us_v1';
+        var ADM_KEY = 'cedon_admin_session';
+        var TMP_KEY = 'cedon_temp_contact';
+
+        function loadData() {
+            try {
+                var old = localStorage.getItem(BK_OLD);
+                var b = localStorage.getItem(BK_KEY);
+                var d = localStorage.getItem(DET_KEY);
+                var s = localStorage.getItem(SUG_KEY);
+                var a = localStorage.getItem(ABT_KEY);
+                var adm = localStorage.getItem(ADM_KEY);
+
+                if (old) {
+                    bookings = JSON.parse(old);
+                    localStorage.setItem(BK_KEY, old);
+                    localStorage.removeItem(BK_OLD);
+                } else if (b) {
+                    bookings = JSON.parse(b);
+                }
+
+                if (d) bookingDetails = JSON.parse(d);
+                if (s) suggestions = JSON.parse(s);
+                if (a) aboutUs = JSON.parse(a);
+                if (adm === '1') isAdminLoggedIn = true;
+            } catch(e) {}
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(BK_KEY, JSON.stringify(bookings));
+                localStorage.setItem(DET_KEY, JSON.stringify(bookingDetails));
+                localStorage.setItem(SUG_KEY, JSON.stringify(suggestions));
+                localStorage.setItem(ABT_KEY, JSON.stringify(aboutUs));
+                localStorage.setItem(ADM_KEY, isAdminLoggedIn ? '1' : '0');
+            } catch(e) {}
+        }
+
+        loadData();
+
+        function fmtMonthYear(d) {
+            return d.toLocaleDateString('en-US', {year:'numeric', month:'long'});
+        }
+        function fmtDate(d) {
+            return d.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        }
+        function fmtShortDate(d) {
+            return d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+        }
+        function fmtTime(h) {
+            var ampm = function(x){return x>=12?'PM':'AM';};
+            var disp = function(x){return x%12===0?12:x%12;};
+            return disp(h)+':00 '+ampm(h)+' – '+disp(h+1)+':00 '+ampm(h+1);
+        }
+        function dKey(d) {
+            return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+        }
+        function sameDay(a,b) {
+            return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+        }
+        function isPast(d) {
+            var t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            return x < t;
+        }
+        function isToday(d) { return sameDay(d, today); }
+        function slotPast(d, h) { return sameDay(d, today) && h < today.getHours(); }
+        function slotBooked(d, h) { var k=dKey(d); return bookings[k] && bookings[k].includes(h); }
+        function slotSelected(h) {
+            for (var i=0; i<selectedSlots.length; i++) {
+                if (selectedSlots[i].hour === h) return true;
+            }
+            return false;
+        }
+        function removeSlot(h) {
+            selectedSlots = selectedSlots.filter(function(s){return s.hour !== h;});
+        }
+        function getTotal() {
+            var total = 0;
+            for (var i=0; i<selectedSlots.length; i++) total += selectedSlots[i].rate;
+            return total;
+        }
+        function getSlotTimesText() {
+            if (selectedSlots.length === 0) return 'None selected';
+            if (selectedSlots.length === 1) return fmtTime(selectedSlots[0].hour);
+            var sorted = selectedSlots.slice().sort(function(a,b){return a.hour-b.hour;});
+            var parts = [];
+            for (var i=0; i<sorted.length; i++) parts.push(fmtTime(sorted[i].hour));
+            return parts.join(', ');
+        }
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function renderCalendar() {
+            var year = currentMonth.getFullYear();
+            var month = currentMonth.getMonth();
+            document.getElementById('monthYear').textContent = fmtMonthYear(currentMonth);
+
+            var todayStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            var currStart = new Date(year, month, 1);
+            var maxMonth = new Date(today.getFullYear(), today.getMonth()+1, 1);
+            document.getElementById('prevMonth').disabled = currStart.getTime() <= todayStart.getTime();
+            document.getElementById('nextMonth').disabled = currStart.getTime() >= maxMonth.getTime();
+
+            var grid = document.getElementById('daysGrid');
+            grid.innerHTML = '';
+
+            var firstDay = new Date(year, month, 1).getDay();
+            var daysInMonth = new Date(year, month+1, 0).getDate();
+
+            for (var i=0; i<firstDay; i++) {
+                var cell = document.createElement('div');
+                cell.className = 'day-cell empty';
+                grid.appendChild(cell);
+            }
+            for (var day=1; day<=daysInMonth; day++) {
+                var date = new Date(year, month, day);
+                var cell = document.createElement('div');
+                cell.className = 'day-cell';
+                cell.textContent = day;
+                if (isToday(date)) cell.classList.add('today');
+                if (isPast(date)) {
+                    cell.classList.add('past');
+                } else {
+                    cell.onclick = (function(d){return function(){selectDate(d);};})(date);
+                }
+                if (selectedDate && sameDay(date, selectedDate)) cell.classList.add('selected-day');
+                grid.appendChild(cell);
+            }
+        }
+
+        function selectDate(date) {
+            if (isPast(date)) { showToast('Cannot book past dates'); return; }
+            selectedDate = date;
+            selectedSlots = [];
+            hideBookingPrompt();
+            renderCalendar();
+            switchView('schedule');
+            renderSchedule();
+        }
+
+        function switchView(name) {
+            document.getElementById('calendarView').classList.remove('active');
+            document.getElementById('scheduleView').classList.remove('active');
+            document.getElementById(name+'View').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function renderSchedule() {
+            if (!selectedDate) return;
+            document.getElementById('selectedDateDisplay').textContent = fmtDate(selectedDate);
+            var container = document.getElementById('timeSlots');
+            container.innerHTML = '';
+            var slots = [];
+            for (var h=5; h<7; h++) slots.push({hour:h, rate:150, label:'Morning Rate'});
+            for (var h=16; h<24; h++) slots.push({hour:h, rate:200, label:'Evening Rate'});
+
+            slots.forEach(function(slot) {
+                var isPast = slotPast(selectedDate, slot.hour);
+                var isBooked = slotBooked(selectedDate, slot.hour);
+                var isSelected = slotSelected(slot.hour);
+
+                var div = document.createElement('div');
+                div.className = 'time-slot';
+                if (isPast) div.classList.add('past-slot');
+                if (isSelected) div.classList.add('has-selected');
+
+                var statusClass='open', statusText='Open', clickable=true;
+                if (isPast) { statusClass='past'; statusText=''; clickable=false; }
+                else if (isBooked) { statusClass='booked'; statusText='Booked'; clickable=false; }
+                else if (isSelected) { statusClass='selected'; statusText='Selected'; }
+
+                div.innerHTML = '<div class="slot-info">' +
+                    '<span class="slot-time">'+fmtTime(slot.hour)+'</span>' +
+                    (!isPast?'<span class="slot-rate">₱'+slot.rate+' · '+slot.label+'</span>':'') +
+                    '</div>' +
+                    (statusText?'<span class="slot-status '+statusClass+'">'+statusText+'</span>':'<span></span>');
+
+                if (clickable && statusText) {
+                    div.querySelector('.slot-status').onclick = function(e) {
+                        e.stopPropagation();
+                        toggleSlot(slot);
+                    };
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function toggleSlot(slot) {
+            if (slotSelected(slot.hour)) {
+                removeSlot(slot.hour);
+                if (selectedSlots.length === 0) hideBookingPrompt();
+            } else {
+                selectedSlots.push(slot);
+            }
+            renderSchedule();
+            if (selectedSlots.length > 0) updateBookingPrompt();
+        }
+
+        function updateBookingPrompt() {
+            var count = selectedSlots.length;
+            var total = getTotal();
+            document.getElementById('promptSlotInfo').innerHTML =
+                fmtShortDate(selectedDate) + ' · ' + count + ' hour' + (count>1?'s':'') +
+                ' · ₱' + total;
+            document.getElementById('bookingPrompt').classList.add('active');
+        }
+
+        function deselectAllSlots() {
+            selectedSlots = [];
+            hideBookingPrompt();
+            renderSchedule();
+        }
+
+        function hideBookingPrompt() {
+            document.getElementById('bookingPrompt').classList.remove('active');
+        }
+
+        function showReceipt() {
+            if (selectedSlots.length === 0 || !selectedDate) return;
+            var total = getTotal();
+            document.getElementById('receiptDate').textContent = fmtDate(selectedDate);
+            document.getElementById('receiptTime').textContent = getSlotTimesText();
+            document.getElementById('receiptRate').textContent = '₱'+selectedSlots[0].rate+' / hour';
+            document.getElementById('receiptTotal').textContent = '₱'+total;
+            document.getElementById('receiptModal').classList.add('active');
+            hideBookingPrompt();
+        }
+
+        function hideReceipt() {
+            document.getElementById('receiptModal').classList.remove('active');
+        }
+
+        // CONTACT MODAL
+        function showContactModal() {
+            if (selectedSlots.length === 0 || !selectedDate) return;
+            document.getElementById('contactModal').classList.add('active');
+            hideReceipt();
+        }
+
+        function hideContactModal() {
+            document.getElementById('contactModal').classList.remove('active');
+        }
+
+        function validateContact() {
+            var name = document.getElementById('contactName').value.trim();
+            var phone = document.getElementById('contactPhone').value.trim();
+            var email = document.getElementById('contactEmail').value.trim();
+            if (!name) { showToast('Please enter your name'); return null; }
+            if (!phone) { showToast('Please enter your phone number'); return null; }
+            if (!email || email.indexOf('@') === -1) { showToast('Please enter a valid email'); return null; }
+            return { name: name, phone: phone, email: email };
+        }
+
+        function processPayment() {
+            var contact = validateContact();
+            if (!contact) return;
+            tempContact = contact;
+            try { localStorage.setItem(TMP_KEY, JSON.stringify(contact)); } catch(e){}
+
+            var total = getTotal();
+            var dk = dKey(selectedDate);
+            var hours = selectedSlots.map(function(s){return s.hour;}).join(',');
+            var base = window.location.href.split('?')[0];
+            var redirect = encodeURIComponent(base+'?payment=success&date='+dk+'&hours='+hours+'&amount='+total);
+            window.location.href = 'gcash-payment.html?amount='+total+'&redirect='+redirect+'&ref=CEDON-'+Date.now();
+        }
+
+        function handlePaymentReturn() {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('payment')==='success') {
+                var dk = params.get('date');
+                var hoursStr = params.get('hours');
+                if (dk && hoursStr) {
+                    var hours = hoursStr.split(',').map(function(h){return parseInt(h);});
+                    if (!bookings[dk]) bookings[dk]=[];
+                    if (!bookingDetails[dk]) bookingDetails[dk]={};
+
+                    var contact = tempContact;
+                    try {
+                        var tc = localStorage.getItem(TMP_KEY);
+                        if (tc) contact = JSON.parse(tc);
+                    } catch(e) {}
+                    if (!contact) contact = { name: 'Unknown', phone: '-', email: '-' };
+
+                    hours.forEach(function(h){
+                        if (!bookings[dk].includes(h)) bookings[dk].push(h);
+                        bookingDetails[dk][h] = {
+                            name: contact.name,
+                            phone: contact.phone,
+                            email: contact.email
+                        };
+                    });
+                    saveData();
+                    try { localStorage.removeItem(TMP_KEY); } catch(e){}
+                    tempContact = null;
+
+                    var date = new Date(dk+'T00:00:00');
+                    document.getElementById('successDate').textContent = fmtDate(date);
+                    var timeTexts = [];
+                    hours.forEach(function(h){timeTexts.push(fmtTime(h));});
+                    document.getElementById('successTime').textContent = timeTexts.join(', ');
+                    document.getElementById('successModal').classList.add('active');
+                    selectedSlots = [];
+                    selectedDate = date;
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        }
+
+        function hideSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+            switchView('calendar');
+            renderCalendar();
+        }
+
+        function showToast(msg) {
+            document.getElementById('toastMessage').textContent = msg;
+            document.getElementById('toast').classList.add('active');
+            setTimeout(function(){document.getElementById('toast').classList.remove('active');}, 3000);
+        }
+
+        // ADMIN FUNCTIONS
+        function toggleMenu() {
+            document.getElementById('menuPanel').classList.toggle('active');
+        }
+
+        function hideMenu() {
+            document.getElementById('menuPanel').classList.remove('active');
+        }
+
+        function showAdminLogin() {
+            hideMenu();
+            if (isAdminLoggedIn) {
+                showAdminPanel();
+            } else {
+                document.getElementById('adminLoginModal').classList.add('active');
+            }
+        }
+
+        function hideAdminLogin() {
+            document.getElementById('adminLoginModal').classList.remove('active');
+        }
+
+        function loginAdmin() {
+            var u = document.getElementById('adminUsername').value.trim();
+            var p = document.getElementById('adminPassword').value;
+            if (u === 'CHERACHE JUMILLA' && p === 'cheyenneeldestroroyoungest2026') {
+                isAdminLoggedIn = true;
+                saveData();
+                hideAdminLogin();
+                showAdminPanel();
+                showToast('Welcome, Admin');
+            } else {
+                showToast('Invalid username or password');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            saveData();
+            hideAdminPanel();
+            showToast('Logged out');
+        }
+
+        function showAdminPanel() {
+            document.getElementById('adminPanel').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            renderAdminBookings();
+            renderAdminSuggestions();
+            renderAdminAboutEditor();
+        }
+
+        function hideAdminPanel() {
+            document.getElementById('adminPanel').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function switchAdminTab(tab) {
+            adminTab = tab;
+            document.querySelectorAll('.admin-tab').forEach(function(t){
+                t.classList.toggle('active', t.dataset.tab === tab);
+            });
+            document.querySelectorAll('.admin-tab-content').forEach(function(c){
+                c.classList.toggle('active', c.id === 'admin' + tab.charAt(0).toUpperCase() + tab.slice(1));
+            });
+            if (tab === 'bookings') renderAdminBookings();
+            if (tab === 'suggestions') renderAdminSuggestions();
+            if (tab === 'about') renderAdminAboutEditor();
+        }
+
+        function renderAdminBookings() {
+            var container = document.getElementById('adminBookingsList');
+            var hasAny = false;
+            var dates = Object.keys(bookings).sort();
+            var html = '<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Date</th><th>Time</th><th>Name</th><th>Phone</th><th>Email</th><th>Action</th></tr></thead><tbody>';
+            dates.forEach(function(dk) {
+                var hours = bookings[dk].slice().sort(function(a,b){return a-b;});
+                hours.forEach(function(h) {
+                    hasAny = true;
+                    var det = bookingDetails[dk] && bookingDetails[dk][h] ? bookingDetails[dk][h] : {name:'-', phone:'-', email:'-'};
+                    var date = new Date(dk+'T00:00:00');
+                    html += '<tr><td>'+escapeHtml(fmtShortDate(date))+'</td><td>'+escapeHtml(fmtTime(h))+'</td><td>'+escapeHtml(det.name)+'</td><td>'+escapeHtml(det.phone)+'</td><td>'+escapeHtml(det.email)+'</td><td><button class="btn btn-sm btn-outline" onclick="window.adminUnbook(''+dk+'','+h+')">Unbook</button></td></tr>';
+                });
+            });
+            html += '</tbody></table></div>';
+            if (!hasAny) {
+                html = '<div class="empty-state"><i class="fas fa-calendar-check"></i><p>No bookings yet</p></div>';
+            }
+            container.innerHTML = html;
+        }
+
+        window.adminUnbook = function(dk, h) {
+            if (!confirm('Unbook this slot?')) return;
+            if (bookings[dk]) {
+                bookings[dk] = bookings[dk].filter(function(x){return x !== h;});
+                if (bookings[dk].length === 0) delete bookings[dk];
+            }
+            if (bookingDetails[dk]) {
+                delete bookingDetails[dk][h];
+                if (Object.keys(bookingDetails[dk]).length === 0) delete bookingDetails[dk];
+            }
+            saveData();
+            renderAdminBookings();
+            if (selectedDate && dKey(selectedDate) === dk) renderSchedule();
+        };
+
+        function adminBookSlot() {
+            var dateVal = document.getElementById('adminBookDate').value;
+            var hourVal = document.getElementById('adminBookHour').value;
+            var name = document.getElementById('adminBookName').value.trim() || 'Admin Booking';
+            var phone = document.getElementById('adminBookPhone').value.trim() || '-';
+            var email = document.getElementById('adminBookEmail').value.trim() || '-';
+            if (!dateVal || !hourVal) { showToast('Please select date and hour'); return; }
+            var dk = dateVal;
+            var h = parseInt(hourVal);
+            if (!bookings[dk]) bookings[dk] = [];
+            if (!bookingDetails[dk]) bookingDetails[dk] = {};
+            if (!bookings[dk].includes(h)) bookings[dk].push(h);
+            bookingDetails[dk][h] = { name: name, phone: phone, email: email };
+            saveData();
+            showToast('Slot booked successfully');
+            renderAdminBookings();
+            document.getElementById('adminBookHour').value = '';
+            document.getElementById('adminBookName').value = '';
+            document.getElementById('adminBookPhone').value = '';
+            document.getElementById('adminBookEmail').value = '';
+        }
+
+        function renderAdminSuggestions() {
+            var container = document.getElementById('adminSuggestionsList');
+            if (suggestions.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-comment-slash"></i><p>No suggestions yet</p></div>';
+                return;
+            }
+            var html = '';
+            suggestions.slice().reverse().forEach(function(s, idx) {
+                html += '<div class="suggestion-item"><p>'+escapeHtml(s.text)+'</p><div class="suggestion-meta"><span>'+new Date(s.time).toLocaleString()+'</span><button class="btn btn-sm btn-outline" style="flex:none;" onclick="window.adminDeleteSuggestion('+idx+')">Delete</button></div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        window.adminDeleteSuggestion = function(displayIdx) {
+            if (!confirm('Delete this suggestion?')) return;
+            var realIdx = suggestions.length - 1 - displayIdx;
+            suggestions.splice(realIdx, 1);
+            saveData();
+            renderAdminSuggestions();
+        };
+
+        function renderAdminAboutEditor() {
+            document.getElementById('editAddress').value = aboutUs.address;
+            var phonesHtml = '';
+            aboutUs.phones.forEach(function(p) {
+                phonesHtml += '<div class="about-editor-row"><input type="text" class="edit-phone" value="'+escapeHtml(p)+'"><button onclick="this.parentElement.remove()">Remove</button></div>';
+            });
+            document.getElementById('editPhonesList').innerHTML = phonesHtml;
+            var emailsHtml = '';
+            aboutUs.emails.forEach(function(e) {
+                emailsHtml += '<div class="about-editor-row"><input type="text" class="edit-email" value="'+escapeHtml(e)+'"><button onclick="this.parentElement.remove()">Remove</button></div>';
+            });
+            document.getElementById('editEmailsList').innerHTML = emailsHtml;
+        }
+
+        function saveAdminAbout() {
+            aboutUs.address = document.getElementById('editAddress').value.trim();
+            var phones = [];
+            document.querySelectorAll('.edit-phone').forEach(function(el) {
+                if (el.value.trim()) phones.push(el.value.trim());
+            });
+            var emails = [];
+            document.querySelectorAll('.edit-email').forEach(function(el) {
+                if (el.value.trim()) emails.push(el.value.trim());
+            });
+            aboutUs.phones = phones.length ? phones : ['639107583114'];
+            aboutUs.emails = emails.length ? emails : ['jumillacharmie@gmail.com'];
+            saveData();
+            renderAboutUs();
+            showToast('About Us updated');
+        }
+
+        // ABOUT US & SUGGESTIONS
+        function renderAboutUs() {
+            document.getElementById('aboutAddress').textContent = aboutUs.address;
+            var phonesEl = document.getElementById('aboutPhones');
+            phonesEl.innerHTML = '';
+            aboutUs.phones.forEach(function(p) {
+                var div = document.createElement('p');
+                div.textContent = p;
+                phonesEl.appendChild(div);
+            });
+            var emailsEl = document.getElementById('aboutEmails');
+            emailsEl.innerHTML = '';
+            aboutUs.emails.forEach(function(e) {
+                var div = document.createElement('p');
+                div.textContent = e;
+                emailsEl.appendChild(div);
+            });
+        }
+
+        function submitSuggestion() {
+            var text = document.getElementById('suggestionText').value.trim();
+            if (!text) { showToast('Please enter your suggestion'); return; }
+            suggestions.push({ text: text, time: Date.now() });
+            saveData();
+            document.getElementById('suggestionText').value = '';
+            showToast('Thank you! Your suggestion has been sent anonymously.');
+            renderSuggestions();
+        }
+
+        function renderSuggestions() {
+            var container = document.getElementById('suggestionList');
+            if (suggestions.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;text-align:center;padding:20px;">No suggestions yet. Be the first to share your thoughts!</p>';
+                return;
+            }
+            var html = '';
+            suggestions.slice().reverse().slice(0, 5).forEach(function(s) {
+                html += '<div class="suggestion-item"><p>'+escapeHtml(s.text)+'</p><div class="suggestion-meta">'+new Date(s.time).toLocaleString()+'</div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        // EVENT LISTENERS
+        document.getElementById('prevMonth').onclick = function() {
+            currentMonth.setMonth(currentMonth.getMonth()-1);
+            renderCalendar();
+        };
+        document.getElementById('nextMonth').onclick = function() {
+            currentMonth.setMonth(currentMonth.getMonth()+1);
+            renderCalendar();
+        };
+        document.getElementById('backToCalendar').onclick = function() {
+            selectedSlots = [];
+            hideBookingPrompt();
+            switchView('calendar');
+            renderCalendar();
+        };
+        document.getElementById('cancelSelection').onclick = deselectAllSlots;
+        document.getElementById('confirmBooking').onclick = showReceipt;
+        document.getElementById('cancelReceipt').onclick = function() {
+            hideReceipt();
+            selectedSlots = [];
+            renderSchedule();
+        };
+        document.getElementById('continuePayment').onclick = showContactModal;
+        document.querySelector('.modal-close').onclick = hideReceipt;
+        document.querySelectorAll('.modal-overlay').forEach(function(o){
+            o.onclick = function(e){
+                if(e.target===o){
+                    hideReceipt();
+                    hideSuccessModal();
+                    hideContactModal();
+                    hideAdminLogin();
+                }
+            };
+        });
+        document.getElementById('backToCalendarSuccess').onclick = hideSuccessModal;
+        document.addEventListener('keydown', function(e) {
+            if (e.key==='Escape') {
+                hideReceipt();
+                hideSuccessModal();
+                hideContactModal();
+                hideAdminLogin();
+            }
+        });
+
+        // Menu & Admin
+        document.getElementById('menuBtn').onclick = toggleMenu;
+        document.getElementById('adminMenuItem').onclick = showAdminLogin;
+        document.querySelector('.modal-close-admin').onclick = hideAdminLogin;
+        document.getElementById('adminLoginBtn').onclick = loginAdmin;
+        document.getElementById('adminLogoutBtn').onclick = logoutAdmin;
+        document.querySelectorAll('.admin-tab').forEach(function(t){
+            t.onclick = function(){ switchAdminTab(t.dataset.tab); };
+        });
+        document.getElementById('adminBookBtn').onclick = adminBookSlot;
+        document.getElementById('addPhoneBtn').onclick = function(){
+            var div = document.createElement('div');
+            div.className = 'about-editor-row';
+            div.innerHTML = '<input type="text" class="edit-phone" placeholder="Phone number"><button onclick="this.parentElement.remove()">Remove</button>';
+            document.getElementById('editPhonesList').appendChild(div);
+        };
+        document.getElementById('addEmailBtn').onclick = function(){
+            var div = document.createElement('div');
+            div.className = 'about-editor-row';
+            div.innerHTML = '<input type="text" class="edit-email" placeholder="Email address"><button onclick="this.parentElement.remove()">Remove</button>';
+            document.getElementById('editEmailsList').appendChild(div);
+        };
+        document.getElementById('saveAboutBtn').onclick = saveAdminAbout;
+        document.getElementById('submitSuggestion').onclick = submitSuggestion;
+        document.querySelector('.modal-close-contact').onclick = hideContactModal;
+        document.getElementById('cancelContact').onclick = hideContactModal;
+        document.getElementById('continueToPayment').onclick = processPayment;
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            var menu = document.getElementById('menuPanel');
+            var btn = document.getElementById('menuBtn');
+            if (!menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+                hideMenu();
+            }
+        });
+
+        // Set admin book date min to today
+        var todayIso = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+        document.getElementById('adminBookDate').min = todayIso;
+        document.getElementById('adminBookDate').value = todayIso;
+
+        // INIT
+        renderAboutUs();
+        renderSuggestions();
+        handlePaymentReturn();
+        renderCalendar();
+        console.log('Cedon Pickleball Court - Ready (v2.0 with Admin & Contact)');
+    })();
+    </script>
+</body>
+</html>
