@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cedon Pickleball Court - Book Now</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @keyframes gpsPulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.7), 0 4px 14px rgba(212, 168, 83, 0.3); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 168, 83, 0), 0 4px 14px rgba(212, 168, 83, 0.3); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0), 0 4px 14px rgba(212, 168, 83, 0.3); }
+        }
+        .gps-fab { animation: gpsPulse 5s infinite; }
+        .gps-fab .gps-tooltip { display: none !important; }
+    </style>
+</head>
+<body>
+    <a href="https://www.google.com/maps/search/?api=1&query=10.160850,124.309307" 
+       target="_blank" 
+       class="gps-fab" 
+       aria-label="Open location in Google Maps">
+        <i class="fas fa-location-dot"></i>
+    </a>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-wrapper">
+                    <img src="logo.png" alt="Cedon Pickleball Court" class="logo-img">
+                </div>
+                <div class="location-badge">
+                    <i class="fas fa-map-pin"></i>
+                    <span>P5, San Francisco, Talibon, Bohol</span>
+                </div>
+            </div>
+            <button id="adminMenuBtn" class="admin-menu-btn">
+                <i class="fas fa-ellipsis"></i>
+            </button>
+        </header>
+
+        <!-- Admin Menu Panel -->
+        <div id="adminMenuPanel" class="admin-menu-panel">
+            <div class="admin-panel-content">
+                <div class="admin-profile">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="admin-info">
+                        <h3>Admin Panel</h3>
+                        <p>Manage bookings and settings</p>
+                    </div>
+                </div>
+                <div class="admin-menu-items">
+                    <button id="adminLoginBtn" class="admin-menu-item">
+                        <i class="fas fa-lock"></i>
+                        <span>Admin Login</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div id="adminLoginModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Admin Login</h2>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="adminUsername" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="adminPassword" placeholder="Enter password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelAdminLogin" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="confirmAdminLogin" class="btn btn-primary btn-lg">Login</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Modal -->
+        <div id="adminDashboardModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content admin-dashboard">
+                <div class="modal-header">
+                    <h2>Admin Dashboard</h2>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="admin-nav">
+                        <button class="admin-nav-btn active" data-tab="bookings">
+                            <i class="fas fa-calendar"></i> Bookings
+                        </button>
+                        <button class="admin-nav-btn" data-tab="suggestions">
+                            <i class="fas fa-comments"></i> Suggestions
+                        </button>
+                        <button class="admin-nav-btn" data-tab="settings">
+                            <i class="fas fa-cog"></i> Settings
+                        </button>
+                    </div>
+
+                    <!-- Bookings Tab -->
+                    <div id="bookingsTab" class="admin-tab active">
+                        <h3>Booked Slots</h3>
+                        <div id="bookingsList" class="bookings-list"></div>
+                    </div>
+
+                    <!-- Suggestions Tab -->
+                    <div id="suggestionsTab" class="admin-tab">
+                        <h3>User Suggestions</h3>
+                        <div id="suggestionsList" class="suggestions-list"></div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div id="settingsTab" class="admin-tab">
+                        <h3>About Us Information</h3>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input type="text" id="settingsAddress" placeholder="Enter address">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Numbers (comma separated)</label>
+                            <input type="text" id="settingsPhone" placeholder="Enter phone numbers">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Addresses (comma separated)</label>
+                            <input type="text" id="settingsEmail" placeholder="Enter email addresses">
+                        </div>
+                        <button id="saveSettings" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="adminLogout" class="btn btn-outline btn-lg">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <section id="calendarView" class="view active">
+            <div class="view-header">
+                <h1 class="view-title">Select a Date</h1>
+                <p class="view-subtitle">Choose your preferred playing day</p>
+            </div>
+
+            <div class="calendar-card">
+                <div class="calendar-nav">
+                    <button id="prevMonth" class="nav-btn" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="month-display">
+                        <i class="far fa-calendar-alt"></i>
+                        <span id="monthYear">Loading...</span>
+                    </div>
+                    <button id="nextMonth" class="nav-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="day-labels">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div id="daysGrid" class="days-grid"></div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-card">
+                    <div class="info-icon morning"><i class="fas fa-sun"></i></div>
+                    <div class="info-text">
+                        <h3>Morning Session</h3>
+                        <p>5:00 AM – 7:00 AM</p>
+                        <span class="rate">₱150 / hour</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon evening"><i class="fas fa-moon"></i></div>
+                    <div class="info-text">
+                        <h3>Evening Session</h3>
+                        <p>4:00 PM – 12:00 AM</p>
+                        <span class="rate">₱200 / hour</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scheduleView" class="view">
+            <div class="view-header schedule-header">
+                <button id="backToCalendar" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+                <div class="schedule-title-group">
+                    <h1 class="view-title">Court Schedule</h1>
+                    <p id="selectedDateDisplay" class="view-subtitle">Select a date</p>
+                </div>
+            </div>
+
+            <div class="legend-bar">
+                <div class="legend-item"><span class="dot open"></span><span>Open</span></div>
+                <div class="legend-item"><span class="dot selected"></span><span>Selected</span></div>
+                <div class="legend-item"><span class="dot booked"></span><span>Booked</span></div>
+            </div>
+
+            <div class="schedule-card">
+                <div class="court-header">
+                    <span class="court-label">Court 1</span>
+                    <span class="court-status available">Available</span>
+                </div>
+                <div id="timeSlots" class="time-slots"></div>
+            </div>
+        </section>
+
+        <div id="bookingPrompt" class="bottom-sheet">
+            <div class="sheet-content">
+                <div class="sheet-handle"></div>
+                <div class="sheet-body">
+                    <div class="sheet-info" id="sheetInfo">
+                        <h3>Confirm Booking</h3>
+                        <p id="promptSlotInfo">Select time slots</p>
+                    </div>
+                    <div class="sheet-actions">
+                        <button id="cancelSelection" class="btn btn-outline">Cancel</button>
+                        <button id="confirmBooking" class="btn btn-primary">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="recipientInfoModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Recipient Information</h2>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">Please provide your contact information for the booking.</p>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="recipientName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="recipientPhone" placeholder="Enter your phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="recipientEmail" placeholder="Enter your email address" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelRecipientInfo" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="confirmRecipientInfo" class="btn btn-primary btn-lg">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="receiptModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Booking Receipt</h2>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="receipt-logo"><img src="logo.png" alt="Cedon"></div>
+                    <div class="receipt-details">
+                        <div class="receipt-row"><span>Date</span><span id="receiptDate">-</span></div>
+                        <div class="receipt-row"><span>Time Slots</span><span id="receiptTime">-</span></div>
+                        <div class="receipt-row"><span>Court</span><span>Court 1</span></div>
+                        <div class="receipt-row"><span>Rate</span><span id="receiptRate">-</span></div>
+                        <div class="receipt-divider"></div>
+                        <div class="receipt-row total"><span>Total Amount</span><span id="receiptTotal">-</span></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="cancelReceipt" class="btn btn-outline btn-lg">Cancel</button>
+                    <button id="continuePayment" class="btn btn-primary btn-lg"><i class="fas fa-wallet"></i>Continue to Payment</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="successModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content success-content">
+                <div class="success-animation"><div class="checkmark-circle"><i class="fas fa-check"></i></div></div>
+                <h2>Payment Complete!</h2>
+                <p>Your court has been successfully booked.</p>
+                <div class="success-details"><p id="successDate">-</p><p id="successTime">-</p></div>
+                <button id="backToCalendarSuccess" class="btn btn-primary btn-lg">Back to Calendar</button>
+            </div>
+        </div>
+
+        <div id="toast" class="toast"><i class="fas fa-info-circle"></i><span id="toastMessage">Notification</span></div>
+
+        <!-- About Us Section -->
+        <section id="aboutSection" class="about-section">
+            <div class="about-content">
+                <h2 class="about-title">About Us</h2>
+                <div class="about-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="contact-details">
+                            <h3>Address</h3>
+                            <p id="aboutAddress">P5, San Francisco, Talibon, Bohol</p>
+                            <a href="https://www.google.com/maps/search/?api=1&query=10.160850,124.309307" target="_blank" class="gps-link">
+                                <i class="fas fa-location-dot"></i> Click the GPS for it to be found on Google Maps
+                            </a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div class="contact-details">
+                            <h3>Contact Number</h3>
+                            <p id="aboutPhone">639107583114</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div class="contact-details">
+                            <h3>Email Address</h3>
+                            <p id="aboutEmail">jumillacharmie@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suggestion Box Section -->
+        <section id="suggestionSection" class="suggestion-section">
+            <div class="suggestion-content">
+                <h2 class="suggestion-title">Suggestions & Concerns</h2>
+                <p class="suggestion-subtitle">Your identity will remain anonymous</p>
+                <div class="suggestion-form">
+                    <div class="form-group">
+                        <textarea id="suggestionText" placeholder="Share your suggestions or concerns with us..."></textarea>
+                    </div>
+                    <button id="submitSuggestion" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Suggestion
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    (function(){
+        var today = new Date();
+        var currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        var selectedDate = null;
+        var selectedSlots = []; // MULTI-SELECT: array of slots
+        var bookings = {};
+        var bookingDetails = {}; // Store recipient info with booking details
+        var recipientInfo = { name: '', phone: '', email: '' };
+        var suggestions = []; // Store anonymous suggestions
+        var isAdminLoggedIn = false;
+        var aboutUsInfo = {
+            address: 'P5, San Francisco, Talibon, Bohol',
+            phones: ['639107583114'],
+            emails: ['jumillacharmie@gmail.com']
+        };
+
+        try {
+            var stored = localStorage.getItem('cedon_bookings_v1');
+            if (stored) bookings = JSON.parse(stored);
+        } catch(e) {}
+
+        try {
+            var detailsStored = localStorage.getItem('cedon_booking_details_v1');
+            if (detailsStored) bookingDetails = JSON.parse(detailsStored);
+        } catch(e) {}
+
+        try {
+            var suggestionsStored = localStorage.getItem('cedon_suggestions_v1');
+            if (suggestionsStored) suggestions = JSON.parse(suggestionsStored);
+        } catch(e) {}
+
+        try {
+            var aboutUsStored = localStorage.getItem('cedon_about_us_v1');
+            if (aboutUsStored) aboutUsInfo = JSON.parse(aboutUsStored);
+        } catch(e) {}
+
+        function fmtMonthYear(d) {
+            return d.toLocaleDateString('en-US', {year:'numeric', month:'long'});
+        }
+        function fmtDate(d) {
+            return d.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        }
+        function fmtShortDate(d) {
+            return d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+        }
+        function fmtTime(h) {
+            var ampm = function(x){return x>=12?'PM':'AM';};
+            var disp = function(x){return x%12===0?12:x%12;};
+            return disp(h)+':00 '+ampm(h)+' – '+disp(h+1)+':00 '+ampm(h+1);
+        }
+        function dKey(d) {
+            return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+        }
+        function sameDay(a,b) {
+            return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+        }
+        function isPast(d) {
+            var t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            return x < t;
+        }
+        function isToday(d) { return sameDay(d, today); }
+        function slotPast(d, h) { return sameDay(d, today) && h < today.getHours(); }
+        function slotBooked(d, h) { var k=dKey(d); return bookings[k] && bookings[k].includes(h); }
+        function slotSelected(h) {
+            for (var i=0; i<selectedSlots.length; i++) {
+                if (selectedSlots[i].hour === h) return true;
+            }
+            return false;
+        }
+        function removeSlot(h) {
+            selectedSlots = selectedSlots.filter(function(s){return s.hour !== h;});
+        }
+        function getTotal() {
+            var total = 0;
+            for (var i=0; i<selectedSlots.length; i++) total += selectedSlots[i].rate;
+            return total;
+        }
+        function getSlotTimesText() {
+            if (selectedSlots.length === 0) return 'None selected';
+            if (selectedSlots.length === 1) return fmtTime(selectedSlots[0].hour);
+            // Sort by hour
+            var sorted = selectedSlots.slice().sort(function(a,b){return a.hour-b.hour;});
+            var parts = [];
+            for (var i=0; i<sorted.length; i++) parts.push(fmtTime(sorted[i].hour));
+            return parts.join(', ');
+        }
+
+        function renderCalendar() {
+            var year = currentMonth.getFullYear();
+            var month = currentMonth.getMonth();
+            document.getElementById('monthYear').textContent = fmtMonthYear(currentMonth);
+
+            var todayStart = new Date(today.getFullYear(), today.getMonth(), 1);
+            var currStart = new Date(year, month, 1);
+            var maxMonth = new Date(today.getFullYear(), today.getMonth()+1, 1);
+            document.getElementById('prevMonth').disabled = currStart.getTime() <= todayStart.getTime();
+            document.getElementById('nextMonth').disabled = currStart.getTime() >= maxMonth.getTime();
+
+            var grid = document.getElementById('daysGrid');
+            grid.innerHTML = '';
+
+            var firstDay = new Date(year, month, 1).getDay();
+            var daysInMonth = new Date(year, month+1, 0).getDate();
+
+            for (var i=0; i<firstDay; i++) {
+                var cell = document.createElement('div');
+                cell.className = 'day-cell empty';
+                grid.appendChild(cell);
+            }
+            for (var day=1; day<=daysInMonth; day++) {
+                var date = new Date(year, month, day);
+                var cell = document.createElement('div');
+                cell.className = 'day-cell';
+                cell.textContent = day;
+                if (isToday(date)) cell.classList.add('today');
+                if (isPast(date)) {
+                    cell.classList.add('past');
+                } else {
+                    cell.onclick = (function(d){return function(){selectDate(d);};})(date);
+                }
+                if (selectedDate && sameDay(date, selectedDate)) cell.classList.add('selected-day');
+                grid.appendChild(cell);
+            }
+        }
+
+        function selectDate(date) {
+            if (isPast(date)) { showToast('Cannot book past dates'); return; }
+            selectedDate = date;
+            selectedSlots = [];
+            hideBookingPrompt();
+            renderCalendar();
+            switchView('schedule');
+            renderSchedule();
+        }
+
+        function switchView(name) {
+            document.getElementById('calendarView').classList.remove('active');
+            document.getElementById('scheduleView').classList.remove('active');
+            document.getElementById(name+'View').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function renderSchedule() {
+            if (!selectedDate) return;
+            document.getElementById('selectedDateDisplay').textContent = fmtDate(selectedDate);
+            var container = document.getElementById('timeSlots');
+            container.innerHTML = '';
+            var slots = [];
+            for (var h=5; h<7; h++) slots.push({hour:h, rate:150, label:'Morning Rate'});
+            for (var h=16; h<24; h++) slots.push({hour:h, rate:200, label:'Evening Rate'});
+
+            slots.forEach(function(slot) {
+                var isPast = slotPast(selectedDate, slot.hour);
+                var isBooked = slotBooked(selectedDate, slot.hour);
+                var isSelected = slotSelected(slot.hour);
+
+                var div = document.createElement('div');
+                div.className = 'time-slot';
+                if (isPast) div.classList.add('past-slot');
+                if (isSelected) div.classList.add('has-selected');
+
+                var statusClass='open', statusText='Open', clickable=true;
+                if (isPast) { statusClass='past'; statusText=''; clickable=false; }
+                else if (isBooked) { statusClass='booked'; statusText='Booked'; clickable=false; }
+                else if (isSelected) { statusClass='selected'; statusText='Selected'; }
+
+                div.innerHTML = '<div class="slot-info">' +
+                    '<span class="slot-time">'+fmtTime(slot.hour)+'</span>' +
+                    (!isPast?'<span class="slot-rate">₱'+slot.rate+' · '+slot.label+'</span>':'') +
+                    '</div>' +
+                    (statusText?'<span class="slot-status '+statusClass+'">'+statusText+'</span>':'<span></span>');
+
+                if (clickable && statusText) {
+                    div.querySelector('.slot-status').onclick = function(e) {
+                        e.stopPropagation();
+                        toggleSlot(slot);
+                    };
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function toggleSlot(slot) {
+            if (slotSelected(slot.hour)) {
+                removeSlot(slot.hour);
+                if (selectedSlots.length === 0) hideBookingPrompt();
+            } else {
+                selectedSlots.push(slot);
+            }
+            renderSchedule();
+            if (selectedSlots.length > 0) updateBookingPrompt();
+        }
+
+        function updateBookingPrompt() {
+            var count = selectedSlots.length;
+            var total = getTotal();
+            document.getElementById('promptSlotInfo').innerHTML =
+                fmtShortDate(selectedDate) + ' · ' + count + ' hour' + (count>1?'s':'') +
+                ' · ₱' + total;
+            document.getElementById('bookingPrompt').classList.add('active');
+        }
+
+        function deselectAllSlots() {
+            selectedSlots = [];
+            hideBookingPrompt();
+            renderSchedule();
+        }
+
+        function hideBookingPrompt() {
+            document.getElementById('bookingPrompt').classList.remove('active');
+        }
+
+        function showReceipt() {
+            if (selectedSlots.length === 0 || !selectedDate) return;
+            document.getElementById('recipientInfoModal').classList.add('active');
+            hideBookingPrompt();
+        }
+
+        function hideRecipientInfoModal() {
+            document.getElementById('recipientInfoModal').classList.remove('active');
+        }
+
+        function showReceiptAfterInfo() {
+            var name = document.getElementById('recipientName').value.trim();
+            var phone = document.getElementById('recipientPhone').value.trim();
+            var email = document.getElementById('recipientEmail').value.trim();
+
+            if (!name || !phone || !email) {
+                showToast('Please fill in all fields');
+                return;
+            }
+
+            recipientInfo = { name: name, phone: phone, email: email };
+            hideRecipientInfoModal();
+
+            var total = getTotal();
+            document.getElementById('receiptDate').textContent = fmtDate(selectedDate);
+            document.getElementById('receiptTime').textContent = getSlotTimesText();
+            document.getElementById('receiptRate').textContent = '₱'+selectedSlots[0].rate+' / hour';
+            document.getElementById('receiptTotal').textContent = '₱'+total;
+            document.getElementById('receiptModal').classList.add('active');
+        }
+
+        function hideReceipt() {
+            document.getElementById('receiptModal').classList.remove('active');
+        }
+
+        // DIRECT TO MOCK PAYMENT - no payment options modal
+        function processPayment() {
+            var total = getTotal();
+            var dk = dKey(selectedDate);
+            var hours = selectedSlots.map(function(s){return s.hour;}).join(',');
+            var base = window.location.href.split('?')[0];
+            var redirect = encodeURIComponent(base+'?payment=success&date='+dk+'&hours='+hours+'&amount='+total+'&name='+encodeURIComponent(recipientInfo.name)+'&phone='+encodeURIComponent(recipientInfo.phone)+'&email='+encodeURIComponent(recipientInfo.email));
+            window.location.href = 'gcash-payment.html?amount='+total+'&redirect='+redirect+'&ref=CEDON-'+Date.now();
+        }
+
+        function handlePaymentReturn() {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('payment')==='success') {
+                var dk = params.get('date');
+                var hoursStr = params.get('hours');
+                var recipientName = params.get('name') || '';
+                var recipientPhone = params.get('phone') || '';
+                var recipientEmail = params.get('email') || '';
+                if (dk && hoursStr) {
+                    var hours = hoursStr.split(',').map(function(h){return parseInt(h);});
+                    if (!bookings[dk]) bookings[dk]=[];
+                    hours.forEach(function(h){
+                        if (!bookings[dk].includes(h)) bookings[dk].push(h);
+                    });
+
+                    // Store recipient info with booking
+                    if (!bookingDetails[dk]) bookingDetails[dk] = {};
+                    hours.forEach(function(h){
+                        bookingDetails[dk][h] = {
+                            name: recipientName,
+                            phone: recipientPhone,
+                            email: recipientEmail
+                        };
+                    });
+
+                    try { localStorage.setItem('cedon_bookings_v1', JSON.stringify(bookings)); } catch(e){}
+                    try { localStorage.setItem('cedon_booking_details_v1', JSON.stringify(bookingDetails)); } catch(e){}
+                    var date = new Date(dk+'T00:00:00');
+                    document.getElementById('successDate').textContent = fmtDate(date);
+                    var timeTexts = [];
+                    hours.forEach(function(h){timeTexts.push(fmtTime(h));});
+                    document.getElementById('successTime').textContent = timeTexts.join(', ');
+                    document.getElementById('successModal').classList.add('active');
+                    selectedSlots = [];
+                    selectedDate = date;
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        }
+
+        function hideSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+            switchView('calendar');
+            renderCalendar();
+        }
+
+        function showToast(msg) {
+            document.getElementById('toastMessage').textContent = msg;
+            document.getElementById('toast').classList.add('active');
+            setTimeout(function(){document.getElementById('toast').classList.remove('active');}, 3000);
+        }
+
+        function submitSuggestion() {
+            var suggestionText = document.getElementById('suggestionText').value.trim();
+            if (!suggestionText) {
+                showToast('Please enter your suggestion or concern');
+                return;
+            }
+
+            var suggestion = {
+                id: Date.now(),
+                text: suggestionText,
+                date: new Date().toISOString(),
+                timestamp: new Date().toLocaleString()
+            };
+
+            suggestions.push(suggestion);
+            try {
+                localStorage.setItem('cedon_suggestions_v1', JSON.stringify(suggestions));
+            } catch(e) {}
+
+            document.getElementById('suggestionText').value = '';
+            showToast('Thank you for your feedback!');
+        }
+
+        // Admin Functions
+        function toggleAdminMenu() {
+            var panel = document.getElementById('adminMenuPanel');
+            panel.classList.toggle('active');
+        }
+
+        function showAdminLogin() {
+            document.getElementById('adminMenuPanel').classList.remove('active');
+            document.getElementById('adminLoginModal').classList.add('active');
+        }
+
+        function hideAdminLogin() {
+            document.getElementById('adminLoginModal').classList.remove('active');
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function handleAdminLogin() {
+            var username = document.getElementById('adminUsername').value.trim();
+            var password = document.getElementById('adminPassword').value.trim();
+
+            if (username === 'CHERACHE JUMILLA' && password === 'cheyenneeldestroroyoungest2026') {
+                isAdminLoggedIn = true;
+                hideAdminLogin();
+                showAdminDashboard();
+                showToast('Welcome, Admin!');
+            } else {
+                showToast('Invalid username or password');
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('adminDashboardModal').classList.add('active');
+            loadAdminBookings();
+            loadAdminSuggestions();
+            loadAdminSettings();
+        }
+
+        function hideAdminDashboard() {
+            document.getElementById('adminDashboardModal').classList.remove('active');
+        }
+
+        function adminLogout() {
+            isAdminLoggedIn = false;
+            hideAdminDashboard();
+            showToast('Logged out successfully');
+        }
+
+        function loadAdminBookings() {
+            var container = document.getElementById('bookingsList');
+            container.innerHTML = '';
+
+            var hasBookings = false;
+            for (var dateKey in bookings) {
+                if (bookings.hasOwnProperty(dateKey) && Array.isArray(bookings[dateKey])) {
+                    var hours = bookings[dateKey].filter(function(h) { return typeof h === 'number'; });
+                    if (hours.length > 0) {
+                        hasBookings = true;
+                        var date = new Date(dateKey + 'T00:00:00');
+
+                        hours.forEach(function(hour) {
+                            var item = document.createElement('div');
+                            item.className = 'booking-item';
+
+                            var recipientInfo = bookingDetails[dateKey] && bookingDetails[dateKey][hour] ?
+                                bookingDetails[dateKey][hour] : { name: 'N/A', phone: 'N/A', email: 'N/A' };
+
+                            item.innerHTML =
+                                '<div class="booking-item-header">' +
+                                '<span class="booking-date">' + fmtDate(date) + '</span>' +
+                                '<span class="booking-time">' + fmtTime(hour) + '</span>' +
+                                '</div>' +
+                                '<div class="booking-recipient">' +
+                                '<p>Name: <span>' + recipientInfo.name + '</span></p>' +
+                                '<p>Phone: <span>' + recipientInfo.phone + '</span></p>' +
+                                '<p>Email: <span>' + recipientInfo.email + '</span></p>' +
+                                '</div>' +
+                                '<div class="booking-actions">' +
+                                '<button class="btn-unbook" onclick="adminUnbookSlot(\'' + dateKey + '\', ' + hour + ')">Unbook</button>' +
+                                '</div>';
+
+                            container.appendChild(item);
+                        });
+                    }
+                }
+            }
+
+            if (!hasBookings) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>No bookings found</p></div>';
+            }
+        }
+
+        function adminUnbookSlot(dateKey, hour) {
+            if (!confirm('Are you sure you want to unbook this slot?')) return;
+
+            if (bookings[dateKey]) {
+                bookings[dateKey] = bookings[dateKey].filter(function(h) { return h !== hour; });
+                if (bookings[dateKey].length === 0) {
+                    delete bookings[dateKey];
+                }
+            }
+
+            if (bookingDetails[dateKey]) {
+                delete bookingDetails[dateKey][hour];
+                if (Object.keys(bookingDetails[dateKey]).length === 0) {
+                    delete bookingDetails[dateKey];
+                }
+            }
+
+            try {
+                localStorage.setItem('cedon_bookings_v1', JSON.stringify(bookings));
+                localStorage.setItem('cedon_booking_details_v1', JSON.stringify(bookingDetails));
+            } catch(e) {}
+
+            loadAdminBookings();
+            renderCalendar();
+            renderSchedule();
+            showToast('Slot unbooked successfully');
+        }
+
+        function adminBookSlot(dateKey, hour) {
+            if (!bookings[dateKey]) bookings[dateKey] = [];
+            if (!bookings[dateKey].includes(hour)) {
+                bookings[dateKey].push(hour);
+                try {
+                    localStorage.setItem('cedon_bookings_v1', JSON.stringify(bookings));
+                } catch(e) {}
+                loadAdminBookings();
+                renderCalendar();
+                renderSchedule();
+                showToast('Slot booked successfully');
+            }
+        }
+
+        function loadAdminSuggestions() {
+            var container = document.getElementById('suggestionsList');
+            container.innerHTML = '';
+
+            if (suggestions.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>No suggestions yet</p></div>';
+                return;
+            }
+
+            suggestions.forEach(function(suggestion) {
+                var item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.innerHTML =
+                    '<div class="suggestion-text">' + suggestion.text + '</div>' +
+                    '<div class="suggestion-date">' + suggestion.timestamp + '</div>' +
+                    '<div class="suggestion-actions">' +
+                    '<button class="btn-delete" onclick="deleteSuggestion(' + suggestion.id + ')">Delete</button>' +
+                    '</div>';
+                container.appendChild(item);
+            });
+        }
+
+        function deleteSuggestion(id) {
+            if (!confirm('Are you sure you want to delete this suggestion?')) return;
+
+            suggestions = suggestions.filter(function(s) { return s.id !== id; });
+            try {
+                localStorage.setItem('cedon_suggestions_v1', JSON.stringify(suggestions));
+            } catch(e) {}
+
+            loadAdminSuggestions();
+            showToast('Suggestion deleted');
+        }
+
+        function loadAdminSettings() {
+            document.getElementById('settingsAddress').value = aboutUsInfo.address;
+            document.getElementById('settingsPhone').value = aboutUsInfo.phones.join(', ');
+            document.getElementById('settingsEmail').value = aboutUsInfo.emails.join(', ');
+        }
+
+        function saveAdminSettings() {
+            var address = document.getElementById('settingsAddress').value.trim();
+            var phonesStr = document.getElementById('settingsPhone').value.trim();
+            var emailsStr = document.getElementById('settingsEmail').value.trim();
+
+            if (!address) {
+                showToast('Address is required');
+                return;
+            }
+
+            aboutUsInfo.address = address;
+            aboutUsInfo.phones = phonesStr ? phonesStr.split(',').map(function(p) { return p.trim(); }).filter(function(p) { return p; }) : ['639107583114'];
+            aboutUsInfo.emails = emailsStr ? emailsStr.split(',').map(function(e) { return e.trim(); }).filter(function(e) { return e; }) : ['jumillacharmie@gmail.com'];
+
+            try {
+                localStorage.setItem('cedon_about_us_v1', JSON.stringify(aboutUsInfo));
+            } catch(e) {}
+
+            updateAboutUsDisplay();
+            showToast('Settings saved successfully');
+        }
+
+        function updateAboutUsDisplay() {
+            document.getElementById('aboutAddress').textContent = aboutUsInfo.address;
+            document.getElementById('aboutPhone').textContent = aboutUsInfo.phones[0];
+            document.getElementById('aboutEmail').textContent = aboutUsInfo.emails[0];
+        }
+
+        function switchAdminTab(tabName) {
+            document.querySelectorAll('.admin-nav-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.admin-tab').forEach(function(tab) {
+                tab.classList.remove('active');
+            });
+
+            document.querySelector('.admin-nav-btn[data-tab="' + tabName + '"]').classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Event listeners
+        document.getElementById('prevMonth').onclick = function() {
+            currentMonth.setMonth(currentMonth.getMonth()-1);
+            renderCalendar();
+        };
+        document.getElementById('nextMonth').onclick = function() {
+            currentMonth.setMonth(currentMonth.getMonth()+1);
+            renderCalendar();
+        };
+        document.getElementById('backToCalendar').onclick = function() {
+            selectedSlots = [];
+            hideBookingPrompt();
+            switchView('calendar');
+            renderCalendar();
+        };
+        document.getElementById('cancelSelection').onclick = deselectAllSlots;
+        document.getElementById('confirmBooking').onclick = showReceipt;
+        document.getElementById('cancelRecipientInfo').onclick = function() {
+            hideRecipientInfoModal();
+            showBookingPrompt();
+        };
+        document.getElementById('confirmRecipientInfo').onclick = showReceiptAfterInfo;
+        document.getElementById('cancelReceipt').onclick = function() {
+            hideReceipt();
+            selectedSlots = [];
+            renderSchedule();
+        };
+        // DIRECT TO PAYMENT - skip options modal
+        document.getElementById('continuePayment').onclick = processPayment;
+        document.querySelectorAll('.modal-close').forEach(function(btn) {
+            btn.onclick = function() {
+                hideReceipt();
+                hideRecipientInfoModal();
+                hideAdminLogin();
+                hideAdminDashboard();
+            };
+        });
+        document.querySelectorAll('.modal-overlay').forEach(function(o){
+            o.onclick = function(e){
+                if(e.target===o){
+                    hideReceipt();
+                    hideRecipientInfoModal();
+                    hideSuccessModal();
+                    hideAdminLogin();
+                    hideAdminDashboard();
+                }
+            };
+        });
+        document.getElementById('backToCalendarSuccess').onclick = hideSuccessModal;
+        document.getElementById('submitSuggestion').onclick = submitSuggestion;
+
+        // Admin event listeners
+        document.getElementById('adminMenuBtn').onclick = toggleAdminMenu;
+        document.getElementById('adminLoginBtn').onclick = showAdminLogin;
+        document.getElementById('cancelAdminLogin').onclick = hideAdminLogin;
+        document.getElementById('confirmAdminLogin').onclick = handleAdminLogin;
+        document.getElementById('adminLogout').onclick = adminLogout;
+        document.getElementById('saveSettings').onclick = saveAdminSettings;
+
+        document.querySelectorAll('.admin-nav-btn').forEach(function(btn) {
+            btn.onclick = function() {
+                switchAdminTab(this.dataset.tab);
+            };
+        });
+
+        // Close admin menu when clicking outside
+        document.addEventListener('click', function(e) {
+            var menuBtn = document.getElementById('adminMenuBtn');
+            var menuPanel = document.getElementById('adminMenuPanel');
+            if (!menuBtn.contains(e.target) && !menuPanel.contains(e.target)) {
+                menuPanel.classList.remove('active');
+            }
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key==='Escape') {
+                hideReceipt();
+                hideRecipientInfoModal();
+                hideSuccessModal();
+                hideAdminLogin();
+                hideAdminDashboard();
+            }
+        });
+
+        // Init
+        try {
+            handlePaymentReturn();
+            renderCalendar();
+            updateAboutUsDisplay();
+
+            // Make admin functions globally accessible
+            window.adminUnbookSlot = adminUnbookSlot;
+            window.deleteSuggestion = deleteSuggestion;
+
+            console.log('Cedon Pickleball Court - Ready (Multi-select)');
+        } catch(e) {
+            console.error('Initialization error:', e);
+            alert('There was an error initializing the application. Please check the console for details.');
+        }
+    })();
+    </script>
+</body>
+</html>
